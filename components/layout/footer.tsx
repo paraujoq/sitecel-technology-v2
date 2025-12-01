@@ -91,6 +91,7 @@ export function Footer() {
           </div>
 
           {/* Social Links */}
+          {/*
           <div>
             <h3 className="font-semibold mb-4">Síguenos</h3>
             <div className="flex space-x-4">
@@ -114,6 +115,7 @@ export function Footer() {
               </a>
             </div>
           </div>
+          */}
         </div>
 
         {/* Copyright */}
