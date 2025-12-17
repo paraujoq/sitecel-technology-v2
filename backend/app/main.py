@@ -1,7 +1,6 @@
-# Crear app/main.py
-
-from fastapi import FastAPI
+﻿from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.api.v1 import projects
 
 app = FastAPI(
     title="Sitecel API",
@@ -16,6 +15,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Incluir router de proyectos
+app.include_router(projects.router, prefix="/api/v1", tags=["projects"])
 
 @app.get("/")
 def root():
@@ -37,4 +39,3 @@ def database_check():
         return {"database": "connected", "status": "ok"}
     except Exception as e:
         return {"database": "error", "message": str(e)}
-
