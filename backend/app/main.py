@@ -10,7 +10,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "https://sitecel.cl"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -32,7 +32,7 @@ def health_check():
 
 @app.get("/db-check")
 def database_check():
-    from app.db.session import engine
+    from backend.session import engine
     try:
         with engine.connect() as conn:
             result = conn.execute("SELECT 1")
