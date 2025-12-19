@@ -15,23 +15,50 @@ export default function AdminLayout({
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    // Verificar autenticación
-    const token = localStorage.getItem("admin_token")
-    
-    // Si está en login, no verificar auth
-    if (pathname === "/admin/login") {
-      setIsLoading(false)
-      return
+    const checkAuth = async () => {
+      // Si está en login, no verificar auth
+      if (pathname === "/admin/login") {
+        setIsLoading(false)
+        return
+      }
+
+      // Obtener token
+      const token = localStorage.getItem("admin_token")
+
+      // Si no hay token, redirigir a login
+      if (!token) {
+        router.push("/admin/login")
+        return
+      }
+
+      // Validar token con el backend
+      try {
+        const response = await fetch("http://127.0.0.1:8000/api/v1/auth/me", {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        })
+
+        if (!response.ok) {
+          // Token inválido o expirado
+          localStorage.removeItem("admin_token")
+          router.push("/admin/login")
+          return
+        }
+
+        // Token válido
+        setIsAuthenticated(true)
+      } catch (error) {
+        // Error de red o servidor
+        console.error("Error validating token:", error)
+        localStorage.removeItem("admin_token")
+        router.push("/admin/login")
+      } finally {
+        setIsLoading(false)
+      }
     }
 
-    // Si no hay token, redirigir a login
-    if (!token) {
-      router.push("/admin/login")
-      return
-    }
-
-    setIsAuthenticated(true)
-    setIsLoading(false)
+    checkAuth()
   }, [pathname, router])
 
   // Página de login no usa el layout con sidebar

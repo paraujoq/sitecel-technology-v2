@@ -16,17 +16,33 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      // TODO: Implementar autenticación real con backend
-      // Por ahora, login simple para desarrollo
-      if (email === "pedro@sitecel.cl" && password === "admin123") {
-        // Guardar token simulado
-        localStorage.setItem("admin_token", "dummy_token")
-        router.push("/admin/dashboard")
-      } else {
-        setError("Credenciales inválidas")
+      // Llamar al backend de autenticación
+      const formData = new URLSearchParams()
+      formData.append('username', email) // OAuth2 usa 'username' aunque sea email
+      formData.append('password', password)
+
+      const response = await fetch("http://127.0.0.1:8000/api/v1/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: formData
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.detail || "Credenciales inválidas")
       }
-    } catch (err) {
-      setError("Error al iniciar sesión")
+
+      const data = await response.json()
+      
+      // Guardar token en localStorage
+      localStorage.setItem("admin_token", data.access_token)
+      
+      // Redirigir al dashboard
+      router.push("/admin/dashboard")
+    } catch (err: any) {
+      setError(err.message || "Error al iniciar sesión")
     } finally {
       setLoading(false)
     }
@@ -104,13 +120,6 @@ export default function LoginPage() {
               {loading ? "Iniciando sesión..." : "Iniciar Sesión"}
             </button>
           </form>
-
-          {/* Credenciales de desarrollo */}
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-            <p className="text-xs text-gray-600 text-center">
-              <strong>Desarrollo:</strong> pedro@sitecel.cl / admin123
-            </p>
-          </div>
         </div>
 
         {/* Footer */}
