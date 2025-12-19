@@ -5,7 +5,7 @@ from uuid import UUID
 
 from app.api.deps import get_db
 from app.models.project import Project, ProjectImage, ProjectVideo
-from app.schemas.project import ProjectCreate, ProjectRead, ProjectList
+from app.schemas.project import ProjectCreate, ProjectUpdate, ProjectRead, ProjectList
 
 router = APIRouter()
 
@@ -127,3 +127,98 @@ def get_project(
         )
     
     return project
+
+@router.put("/projects/{project_id}", response_model=ProjectRead)
+def update_project(
+    project_id: UUID,
+    project_in: ProjectUpdate,
+    db: Session = Depends(get_db)
+):
+    """
+    Actualizar un proyecto existente.
+    
+    Solo se actualizan los campos que se envían.
+    """
+    # Buscar el proyecto
+    db_project = db.query(Project).filter(Project.id == project_id).first()
+    
+    if not db_project:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Project with id {project_id} not found"
+        )
+    
+    # Verificar slug único si se está actualizando
+    if project_in.slug and project_in.slug != db_project.slug:
+        existing_slug = db.query(Project).filter(
+            Project.slug == project_in.slug,
+            Project.id != project_id
+        ).first()
+        
+        if existing_slug:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Project with slug '{project_in.slug}' already exists"
+            )
+    
+    # Actualizar solo los campos que se envían
+    update_data = project_in.dict(exclude_unset=True)
+    
+    for field, value in update_data.items():
+        setattr(db_project, field, value)
+    
+    db.commit()
+    db.refresh(db_project)
+    
+    return db_project
+
+
+@router.delete("/projects/{project_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_project(
+    project_id: UUID,
+    db: Session = Depends(get_db)
+):
+    """
+    Eliminar un proyecto.
+    
+    También elimina todas las imágenes y videos asociados (CASCADE).
+    """
+    db_project = db.query(Project).filter(Project.id == project_id).first()
+    
+    if not db_project:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Project with id {project_id} not found"
+        )
+    
+    db.delete(db_project)
+    db.commit()
+    
+    return None
+
+
+@router.patch("/projects/{project_id}/publish", response_model=ProjectRead)
+def toggle_publish(
+    project_id: UUID,
+    db: Session = Depends(get_db)
+):
+    """
+    Cambiar el estado de publicación de un proyecto.
+    
+    Si está publicado, lo despublica. Si está despublicado, lo publica.
+    """
+    db_project = db.query(Project).filter(Project.id == project_id).first()
+    
+    if not db_project:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Project with id {project_id} not found"
+        )
+    
+    # Toggle published
+    db_project.published = not db_project.published
+    
+    db.commit()
+    db.refresh(db_project)
+    
+    return db_project

@@ -49,10 +49,11 @@ export default function DashboardPage() {
     }
   }
 
+  {/* "SE ELIMINÓ YA QUE SE PASÓ AL SIDEBAR"
   const handleLogout = () => {
     localStorage.removeItem("admin_token")
     router.push("/admin/login")
-  }
+  } */}
 
   if (loading) {
     return (
@@ -64,7 +65,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
+      {/* Header "ELIMINADO YA QUE SE PASÓ A LAYOUT"
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
@@ -82,7 +83,7 @@ export default function DashboardPage() {
             </button>
           </div>
         </div>
-      </header>
+      </header> */}
 
       {/* Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
