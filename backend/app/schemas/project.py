@@ -101,17 +101,23 @@ class ProjectRead(ProjectBase):
         from_attributes = True
 
 class ProjectList(BaseModel):
-    """Schema simplificado para listados (sin images/videos)"""
+    """Schema pasó de ser simplificado a completo, luego que la API no cargaba toda la data del backend, esta es la nueva versión"""
     id: UUID
     slug: str
     title: str
+    description: Optional[str] = None
     category: str
     published: bool
-    start_date: Optional[date]
-    duration: Optional[str]
-    location: Optional[str]
-    tags: List[str]
+    client: Optional[str] = None
+    start_date: Optional[date] = None
+    duration: Optional[str] = None
+    location: Optional[str] = None
+    tags: List[str] = []
+    highlights: List[str] = []
     created_at: datetime
+    updated_at: datetime
+    images: List["ProjectImageRead"] = []
+    videos: List["ProjectVideoRead"] = []
     
     class Config:
         from_attributes = True
