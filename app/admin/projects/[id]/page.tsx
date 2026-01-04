@@ -328,6 +328,10 @@ export default function ProjectDetailPage() {
           </div>
         )}
 
+        {/* DEBUG - ELIMINAR DESPUÉS */}
+        {console.log('Project images:', project.images)}
+        {console.log('Project videos:', project.videos)}
+
         {/* Imágenes */}
         {project.images && project.images.length > 0 && (
           <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200 mb-6">

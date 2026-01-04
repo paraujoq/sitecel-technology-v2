@@ -1,10 +1,8 @@
+"use client"
+
+import { useEffect, useState } from "react"
 import { getPublishedProjects } from "@/lib/api"
 import Link from "next/link"
-
-export const metadata = {
-  title: "Proyectos | Sitecel Technology",
-  description: "Portafolio de proyectos de telecomunicaciones, electricidad y energías limpias",
-}
 
 // Mapeo de categorías a nombres legibles
 const categoryNames: Record<string, string> = {
@@ -22,9 +20,34 @@ const categoryColors: Record<string, string> = {
   "energias-limpias": "bg-green-100 text-green-800"
 }
 
-export default async function ProyectosPage() {
-  // Obtener proyectos desde la API
-  const projects = await getPublishedProjects()
+export default function ProyectosPage() {
+  const [projects, setProjects] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const data = await getPublishedProjects()
+        setProjects(data)
+      } catch (error) {
+        console.error("Error fetching projects:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchProjects()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Cargando proyectos...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -68,21 +91,25 @@ export default async function ProyectosPage() {
                       {/* Imagen del proyecto */}
                       <div className="aspect-video bg-gray-200 relative overflow-hidden">
                         {project.images && project.images.length > 0 ? (
-                          <div className="w-full h-full bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center">
-                            <svg
-                              className="w-16 h-16 text-blue-300"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                              />
-                            </svg>
-                          </div>
+                          <img
+                            src={project.images[0].url}
+                            alt={project.images[0].alt_text || project.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            onError={(e) => {
+                              const img = e.target as HTMLImageElement
+                              img.style.display = 'none'
+                              const parent = img.parentElement
+                              if (parent) {
+                                parent.innerHTML = `
+                                  <div class="w-full h-full bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center">
+                                    <svg class="w-16 h-16 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                  </div>
+                                `
+                              }
+                            }}
+                          />
                         ) : (
                           <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-50 flex items-center justify-center">
                             <svg

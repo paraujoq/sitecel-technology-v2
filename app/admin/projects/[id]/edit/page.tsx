@@ -89,7 +89,9 @@ export default function EditProjectPage() {
             start_date: project.start_date || "",
             duration: project.duration || "",
             tags: project.tags || [],
-            highlights: project.highlights || []
+            highlights: project.highlights || [],
+            images: project.images || [],  // ← AGREGAR
+            videos: project.videos || []   // ← AGREGAR
           }}
         />
       </div>

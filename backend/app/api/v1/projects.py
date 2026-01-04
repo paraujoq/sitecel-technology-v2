@@ -1,11 +1,12 @@
-﻿from fastapi import APIRouter, Depends, HTTPException, status
+﻿import uuid
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 from uuid import UUID
 
 from app.api.deps import get_db
 from app.models.project import Project, ProjectImage, ProjectVideo
-from app.schemas.project import ProjectCreate, ProjectUpdate, ProjectRead, ProjectList
+from app.schemas.project import ( ProjectCreate, ProjectUpdate, ProjectRead, ProjectList )
 
 router = APIRouter()
 
@@ -161,11 +162,47 @@ def update_project(
                 detail=f"Project with slug '{project_in.slug}' already exists"
             )
     
-    # Actualizar solo los campos que se envían
-    update_data = project_in.dict(exclude_unset=True)
+    # IMPORTANTE: Excluir images y videos del update_data
+    update_data = project_in.dict(exclude_unset=True, exclude={'images', 'videos'})
     
+    # Actualizar solo los campos básicos
     for field, value in update_data.items():
         setattr(db_project, field, value)
+    
+    # Actualizar imágenes si se proporcionan
+    if project_in.images is not None:
+        # Eliminar imágenes existentes
+        db.query(ProjectImage).filter(ProjectImage.project_id == project_id).delete()
+        
+        # Agregar nuevas imágenes
+        for img_data in project_in.images:
+            new_image = ProjectImage(
+                id=uuid.uuid4(),
+                project_id=project_id,
+                url=img_data.url,
+                alt_text=img_data.alt_text or "",
+                caption=img_data.caption or "",
+                display_order=img_data.display_order
+            )
+            db.add(new_image)
+    
+    # Actualizar videos si se proporcionan
+    if project_in.videos is not None:
+        # Eliminar videos existentes
+        db.query(ProjectVideo).filter(ProjectVideo.project_id == project_id).delete()
+        
+        # Agregar nuevos videos
+        for vid_data in project_in.videos:
+            new_video = ProjectVideo(
+                id=uuid.uuid4(),
+                project_id=project_id,
+                video_url=vid_data.video_url,
+                thumbnail_url=vid_data.thumbnail_url or "",
+                title=vid_data.title or "",
+                duration=vid_data.duration or 0,
+                display_order=vid_data.display_order
+            )
+            db.add(new_video)
     
     db.commit()
     db.refresh(db_project)

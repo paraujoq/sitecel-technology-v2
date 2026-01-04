@@ -203,7 +203,7 @@ export default function ProjectsPage() {
                     </td>
                     <td className="px-6 py-4 text-right text-sm font-medium">
                       <Link
-                        href={`/admin/projects/${project.id}`}
+                        href={`/admin/projects/${project.id}/view`}
                         className="text-blue-600 hover:text-blue-900 mr-4"
                       >
                         Ver

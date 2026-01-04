@@ -1,6 +1,7 @@
 import { getProjectBySlug, getPublishedProjects } from "@/lib/api"
 import { notFound } from "next/navigation"
 import Link from "next/link"
+import ProjectImage from "@/components/ProjectImage"
 
 // Mapeo de categorías
 const categoryNames: Record<string, string> = {
@@ -166,43 +167,66 @@ export default async function ProjectDetailPage({ params }: { params: { slug: st
 
               {/* Galería de Imágenes */}
               {project.images && project.images.length > 0 && (
-                <div className="bg-white rounded-lg shadow-md p-8 mb-8">
+                <div className="bg-white rounded-lg shadow-md p-8">
                   <h2 className="text-2xl font-bold text-gray-900 mb-6">
                     Galería de Imágenes
                   </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {project.images.map((image) => (
-                      <div key={image.id} className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center">
-                        <svg className="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                      </div>
+                      <ProjectImage
+                        key={image.id}
+                        src={image.url}
+                        alt={image.alt_text || project.title}
+                        caption={image.caption}
+                      />
                     ))}
                   </div>
-                  <p className="text-sm text-gray-500 mt-4">
-                    Las imágenes se mostrarán cuando se agreguen URLs en el admin.
-                  </p>
                 </div>
               )}
 
               {/* Videos */}
-              {project.videos && project.videos.length > 0 && (
+             {project.videos && project.videos.length > 0 && (
                 <div className="bg-white rounded-lg shadow-md p-8">
                   <h2 className="text-2xl font-bold text-gray-900 mb-6">
                     Videos del Proyecto
                   </h2>
-                  <div className="space-y-4">
+                  <div className="space-y-6">
                     {project.videos.map((video) => (
-                      <div key={video.id} className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center">
-                        <svg className="w-16 h-16 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
-                          <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z" />
-                        </svg>
+                      <div key={video.id}>
+                        {video.title && (
+                          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                            {video.title}
+                          </h3>
+                        )}
+                        <div className="aspect-video bg-black rounded-lg overflow-hidden">
+                          {video.video_url.includes('youtube.com') || video.video_url.includes('youtu.be') ? (
+                            <iframe
+                              src={video.video_url}
+                              className="w-full h-full"
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowFullScreen
+                            />
+                          ) : video.video_url.includes('drive.google.com') ? (
+                            <iframe
+                              src={video.video_url}
+                              className="w-full h-full"
+                              allow="autoplay"
+                              allowFullScreen
+                            />
+                          ) : (
+                            <video
+                              controls
+                              className="w-full h-full"
+                              poster={video.thumbnail_url || undefined}
+                            >
+                              <source src={video.video_url} type="video/mp4" />
+                              Tu navegador no soporta la reproducción de video.
+                            </video>
+                          )}
+                        </div>
                       </div>
                     ))}
                   </div>
-                  <p className="text-sm text-gray-500 mt-4">
-                    Los videos se mostrarán cuando se agreguen URLs en el admin.
-                  </p>
                 </div>
               )}
             </div>

@@ -89,6 +89,8 @@ class ProjectUpdate(BaseModel):
     duration: Optional[str] = Field(None, max_length=50)
     tags: Optional[List[str]] = None
     highlights: Optional[List[str]] = None
+    images: Optional[List[ProjectImageCreate]] = None  # ← AGREGAR
+    videos: Optional[List[ProjectVideoCreate]] = None  # ← AGREGAR
 
 class ProjectRead(ProjectBase):
     id: UUID
