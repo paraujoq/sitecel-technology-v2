@@ -23,6 +23,7 @@ class Settings(BaseSettings):
     
     class Config:
         env_file = ".env"
-        case_sensitive = True
+        case_sensitive = False  # ← AGREGAR ESTA LÍNEA
+        extra = "ignore"        # ← AGREGAR ESTA LÍNEA
 
 settings = Settings()
