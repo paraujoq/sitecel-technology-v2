@@ -294,8 +294,8 @@ export default function ProjectDetailPage() {
           </div>
         )}
 
-        {/* Tags */}
-        {project.tags && project.tags.length > 0 && (
+        {/* Tags Section */}
+        {project.tags && project.tags.length > 0 ? (
           <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200 mb-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Tags</h2>
             <div className="flex flex-wrap gap-2">
