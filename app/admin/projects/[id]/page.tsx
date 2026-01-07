@@ -312,7 +312,7 @@ export default function ProjectDetailPage() {
         )}
 
         {/* Highlights */}
-        {project.highlights && project.highlights.length > 0 && (
+        {project.highlights && project.highlights.length > 0 ? (
           <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200 mb-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Highlights / Logros</h2>
             <ul className="space-y-2">
@@ -333,7 +333,7 @@ export default function ProjectDetailPage() {
         {console.log('Project videos:', project.videos)}
 
         {/* Imágenes */}
-        {project.images && project.images.length > 0 && (
+        {project.images && project.images.length > 0 ? (
           <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200 mb-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Imágenes ({project.images.length})
@@ -357,7 +357,7 @@ export default function ProjectDetailPage() {
         )}
 
         {/* Videos */}
-        {project.videos && project.videos.length > 0 && (
+        {project.videos && project.videos.length > 0 ? (
           <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Videos ({project.videos.length})
