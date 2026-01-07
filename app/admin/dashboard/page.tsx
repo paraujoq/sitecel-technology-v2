@@ -1,5 +1,7 @@
-"use client"
+﻿"use client"
 
+
+import { API_URL } from "@/lib/config"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
@@ -15,24 +17,24 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Verificar autenticación
+    // Verificar autenticaciÃ³n
     const token = localStorage.getItem("admin_token")
     if (!token) {
       router.push("/admin/login")
       return
     }
 
-    // Cargar estadísticas
+    // Cargar estadÃ­sticas
     fetchStats()
   }, [router])
 
   const fetchStats = async () => {
     try {
       // Obtener todos los proyectos
-      const response = await fetch("http://127.0.0.1:8000/api/v1/projects")
+      const response = await fetch("${API_URL}/projects")
       const projects = await response.json()
 
-      // Calcular estadísticas
+      // Calcular estadÃ­sticas
       const published = projects.filter((p: any) => p.published).length
       const draft = projects.filter((p: any) => !p.published).length
 
@@ -49,7 +51,7 @@ export default function DashboardPage() {
     }
   }
 
-  {/* "SE ELIMINÓ YA QUE SE PASÓ AL SIDEBAR"
+  {/* "SE ELIMINÃ“ YA QUE SE PASÃ“ AL SIDEBAR"
   const handleLogout = () => {
     localStorage.removeItem("admin_token")
     router.push("/admin/login")
@@ -65,13 +67,13 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header "ELIMINADO YA QUE SE PASÓ A LAYOUT"
+      {/* Header "ELIMINADO YA QUE SE PASÃ“ A LAYOUT"
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">
-                Panel de Administración
+                Panel de AdministraciÃ³n
               </h1>
               <p className="text-sm text-gray-600">Sitecel Technology</p>
             </div>
@@ -79,7 +81,7 @@ export default function DashboardPage() {
               onClick={handleLogout}
               className="px-4 py-2 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition"
             >
-              Cerrar Sesión
+              Cerrar SesiÃ³n
             </button>
           </div>
         </div>
@@ -134,7 +136,7 @@ export default function DashboardPage() {
           <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Imágenes</p>
+                <p className="text-sm text-gray-600 mb-1">ImÃ¡genes</p>
                 <p className="text-3xl font-bold text-purple-600">{stats.totalImages}</p>
               </div>
               <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
@@ -148,7 +150,7 @@ export default function DashboardPage() {
 
         {/* Quick Actions */}
         <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200 mb-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Acciones Rápidas</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Acciones RÃ¡pidas</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Link
               href="/admin/projects"
@@ -198,7 +200,7 @@ export default function DashboardPage() {
                 <h3 className="font-semibold text-gray-900 group-hover:text-purple-600 transition">
                   API Docs
                 </h3>
-                <p className="text-sm text-gray-600">Documentación Swagger</p>
+                <p className="text-sm text-gray-600">DocumentaciÃ³n Swagger</p>
               </div>
             </a>
           </div>
@@ -213,8 +215,8 @@ export default function DashboardPage() {
             <div>
               <h3 className="font-semibold text-blue-900 mb-1">Bienvenido al CMS de Sitecel</h3>
               <p className="text-sm text-blue-800">
-                Desde aquí puedes gestionar todos los proyectos de la empresa. 
-                Usa el menú de acciones rápidas para empezar.
+                Desde aquÃ­ puedes gestionar todos los proyectos de la empresa. 
+                Usa el menÃº de acciones rÃ¡pidas para empezar.
               </p>
             </div>
           </div>

@@ -1,5 +1,6 @@
 "use client"
 
+import { API_URL } from "@/lib/config"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 
@@ -21,7 +22,7 @@ export default function LoginPage() {
       formData.append('username', email) // OAuth2 usa 'username' aunque sea email
       formData.append('password', password)
 
-      const response = await fetch("http://127.0.0.1:8000/api/v1/auth/login", {
+      const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",

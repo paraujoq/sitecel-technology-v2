@@ -1,5 +1,7 @@
-"use client"
+﻿"use client"
 
+
+import { API_URL } from "@/lib/config"
 import { usePathname, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import Sidebar from "@/components/admin/Sidebar"
@@ -16,7 +18,7 @@ export default function AdminLayout({
 
   useEffect(() => {
     const checkAuth = async () => {
-      // Si está en login, no verificar auth
+      // Si estÃ¡ en login, no verificar auth
       if (pathname === "/admin/login") {
         setIsLoading(false)
         return
@@ -33,20 +35,20 @@ export default function AdminLayout({
 
       // Validar token con el backend
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/v1/auth/me", {
+        const response = await fetch("${API_URL}/auth/me", {
           headers: {
             "Authorization": `Bearer ${token}`
           }
         })
 
         if (!response.ok) {
-          // Token inválido o expirado
+          // Token invÃ¡lido o expirado
           localStorage.removeItem("admin_token")
           router.push("/admin/login")
           return
         }
 
-        // Token válido
+        // Token vÃ¡lido
         setIsAuthenticated(true)
       } catch (error) {
         // Error de red o servidor
@@ -61,7 +63,7 @@ export default function AdminLayout({
     checkAuth()
   }, [pathname, router])
 
-  // Página de login no usa el layout con sidebar
+  // PÃ¡gina de login no usa el layout con sidebar
   if (pathname === "/admin/login") {
     return <>{children}</>
   }
@@ -72,18 +74,18 @@ export default function AdminLayout({
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Verificando autenticación...</p>
+          <p className="text-gray-600">Verificando autenticaciÃ³n...</p>
         </div>
       </div>
     )
   }
 
-  // No renderizar nada si no está autenticado (está redirigiendo)
+  // No renderizar nada si no estÃ¡ autenticado (estÃ¡ redirigiendo)
   if (!isAuthenticated) {
     return null
   }
 
-  // Layout con sidebar para todas las páginas admin (excepto login)
+  // Layout con sidebar para todas las pÃ¡ginas admin (excepto login)
   return (
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar />
@@ -93,3 +95,4 @@ export default function AdminLayout({
     </div>
   )
 }
+

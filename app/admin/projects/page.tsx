@@ -1,5 +1,7 @@
-"use client"
+﻿"use client"
 
+
+import { API_URL } from "@/lib/config"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
@@ -24,7 +26,7 @@ export default function ProjectsPage() {
   const [filter, setFilter] = useState<"all" | "published" | "draft">("all")
 
   useEffect(() => {
-    // Verificar autenticación
+    // Verificar autenticaciÃ³n
     const token = localStorage.getItem("admin_token")
     if (!token) {
       router.push("/admin/login")
@@ -37,7 +39,7 @@ export default function ProjectsPage() {
   const fetchProjects = async () => {
     setLoading(true)
     try {
-      let url = "http://127.0.0.1:8000/api/v1/projects"
+      let url = "${API_URL}/projects"
       
       if (filter === "published") {
         url += "?published=true"
@@ -67,7 +69,7 @@ export default function ProjectsPage() {
 
   return (
      <div className="min-h-screen">
-    {/* Header de la página */}
+    {/* Header de la pÃ¡gina */}
     <div className="bg-white border-b border-gray-200 px-8 py-6">
       <div className="flex justify-between items-center">
         <div>
@@ -148,13 +150,13 @@ export default function ProjectsPage() {
                     Proyecto
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Categoría
+                    CategorÃ­a
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Estado
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Ubicación
+                    UbicaciÃ³n
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Fecha
