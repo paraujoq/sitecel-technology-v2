@@ -1,8 +1,8 @@
-/**
+﻿/**
  * Servicio para interactuar con la API de Sitecel
  */
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api/v1'
 
 export interface Project {
   id: string
@@ -45,7 +45,7 @@ export interface ProjectVideo {
  */
 export async function getPublishedProjects(): Promise<Project[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/v1/projects?published=true`, {
+    const response = await fetch(`${API_BASE_URL}/projects?published=true`, {
       cache: 'no-store', // Siempre obtener datos frescos
     })
 
@@ -61,12 +61,12 @@ export async function getPublishedProjects(): Promise<Project[]> {
 }
 
 /**
- * Obtener proyectos por categoría
+ * Obtener proyectos por categorÃ­a
  */
 export async function getProjectsByCategory(category: string): Promise<Project[]> {
   try {
     const response = await fetch(
-      `${API_BASE_URL}/api/v1/projects?published=true&category=${category}`,
+      `${API_BASE_URL}/projects?published=true&category=${category}`,
       {
         cache: 'no-store',
       }
@@ -88,7 +88,7 @@ export async function getProjectsByCategory(category: string): Promise<Project[]
  */
 export async function getProjectBySlug(slug: string): Promise<Project | null> {
   try {
-    // Primero obtener todos los proyectos (porque no tenemos endpoint por slug aún)
+    // Primero obtener todos los proyectos (porque no tenemos endpoint por slug aÃºn)
     const projects = await getPublishedProjects()
     const project = projects.find(p => p.slug === slug)
     
@@ -100,7 +100,7 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
 }
 
 /**
- * Obtener categorías únicas de proyectos publicados
+ * Obtener categorÃ­as Ãºnicas de proyectos publicados
  */
 export async function getCategories(): Promise<string[]> {
   try {
