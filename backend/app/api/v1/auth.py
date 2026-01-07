@@ -16,6 +16,14 @@ def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db)
 ):
+  
+    # DEBUG
+    print(f"🔍 Login attempt:")
+    print(f"   Email: {form_data.username}")
+    print(f"   Password length: {len(form_data.password)} chars")
+    print(f"   Password bytes: {len(form_data.password.encode('utf-8'))} bytes")
+    print(f"   Password (first 20 chars): {form_data.password[:20]}...")
+  
     """
     Login con email y password.
     
