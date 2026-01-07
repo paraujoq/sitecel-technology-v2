@@ -15,7 +15,7 @@ class Settings:
         self.ACCESS_TOKEN_EXPIRE_MINUTES = int(os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES", "60"))
         self.ENVIRONMENT = os.environ.get("ENVIRONMENT", "development")
         self.DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
-        self.ALLOWED_ORIGINS = os.environ.get("ALLOWED_ORIGINS", "http://localhost:3000")
+        self.ALLOWED_ORIGINS = os.environ.get("ALLOWED_ORIGINS", "https://sitecel.cl,https://www.sitecel.cl")
         
         # Validar
         if not self.DATABASE_URL:
