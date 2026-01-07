@@ -8,20 +8,26 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verificar password - truncar a 72 bytes para bcrypt"""
     try:
-        # Truncar a 72 bytes (límite de bcrypt)
-        if isinstance(plain_password, str):
-            plain_password = plain_password.encode('utf-8')[:72].decode('utf-8', errors='ignore')
-        return pwd_context.verify(plain_password, hashed_password)
+        # Convertir a bytes y truncar
+        password_bytes = plain_password.encode('utf-8')[:72]
+        # Volver a string
+        truncated_password = password_bytes.decode('utf-8', errors='ignore')
+        return pwd_context.verify(truncated_password, hashed_password)
     except Exception as e:
         print(f"❌ Error verificando password: {e}")
         return False
 
 def get_password_hash(password: str) -> str:
     """Hashear password - truncar a 72 bytes para bcrypt"""
-    # Truncar a 72 bytes (límite de bcrypt)
-    if isinstance(password, str):
-        password = password.encode('utf-8')[:72].decode('utf-8', errors='ignore')
-    return pwd_context.hash(password)
+    try:
+        # Convertir a bytes y truncar
+        password_bytes = password.encode('utf-8')[:72]
+        # Volver a string
+        truncated_password = password_bytes.decode('utf-8', errors='ignore')
+        return pwd_context.hash(truncated_password)
+    except Exception as e:
+        print(f"❌ Error hasheando password: {e}")
+        raise
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
     """Crear token JWT"""
