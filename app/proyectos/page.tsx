@@ -201,7 +201,7 @@ export default function ProyectosPage() {
                         {/* Tags */}
                         {project.tags && project.tags.length > 0 && (
                           <div className="mt-4 flex flex-wrap gap-2">
-                            {project.tags.slice(0, 3).map((tag, index) => (
+                            {project.tags.slice(0, 3).map((tag: string, index: number) => (
                               <span
                                 key={index}
                                 className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded"
