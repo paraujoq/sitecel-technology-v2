@@ -39,14 +39,22 @@ export default function LoginPage() {
       
       // Guardar token en localStorage
       localStorage.setItem("admin_token", data.access_token)
-      
-      // Redirigir al dashboard
-      router.push("/admin/dashboard")
-    } catch (err: any) {
-      setError(err.message || "Error al iniciar sesión")
-    } finally {
-      setLoading(false)
-    }
+
+      console.log("✅ Login exitoso, token guardado")
+      console.log("🔄 Redirigiendo a /admin/projects...")
+
+      // Redirigir - usar window.location como fallback
+      try {
+        router.push("/admin/projects")
+        
+        // Fallback si router.push no funciona
+        setTimeout(() => {
+          window.location.href = "/admin/projects"
+        }, 100)
+      } catch (err) {
+        console.error("❌ Error en redirect:", err)
+        window.location.href = "/admin/projects"
+      }
   }
 
   return (
