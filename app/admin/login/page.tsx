@@ -1,25 +1,40 @@
+﻿"use client"
+
 import { API_URL } from "@/lib/config"
-import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { useState, useEffect } from "react"
 
 export default function LoginPage() {
+  console.log("🎬 [LOGIN] Componente LoginPage montado")
+  
   const router = useRouter()
+  console.log("🧭 [LOGIN] Router inicializado:", { router })
+  
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
+  // Logging cuando cambian los estados
+  useEffect(() => {
+    console.log("📊 [LOGIN] Estado actualizado:", { email, passwordLength: password.length, error, loading })
+  }, [email, password, error, loading])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    console.log("🚀 [LOGIN] Iniciando proceso de login...")
+    
     setError("")
     setLoading(true)
 
     try {
-      // Llamar al backend de autenticación
+      console.log("📝 [LOGIN] Preparando formData...")
       const formData = new URLSearchParams()
       formData.append("username", email)
       formData.append("password", password)
+      console.log("✅ [LOGIN] FormData preparado:", { email, passwordLength: password.length })
 
+      console.log("🌐 [LOGIN] Haciendo fetch a:", `${API_URL}/auth/login`)
       const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: {
@@ -27,36 +42,52 @@ export default function LoginPage() {
         },
         body: formData
       })
+      console.log("📡 [LOGIN] Response recibida:", { status: response.status, ok: response.ok })
 
       if (!response.ok) {
+        console.error("❌ [LOGIN] Response no OK")
         const errorData = await response.json()
+        console.error("❌ [LOGIN] Error data:", errorData)
         throw new Error(errorData.detail || "Credenciales inválidas")
       }
 
+      console.log("📦 [LOGIN] Parseando JSON...")
       const data = await response.json()
+      console.log("✅ [LOGIN] Data recibida:", { hasToken: !!data.access_token, tokenLength: data.access_token?.length })
       
-      // Guardar token en localStorage
+      console.log("💾 [LOGIN] Guardando token en localStorage...")
       localStorage.setItem("admin_token", data.access_token)
+      console.log("✅ [LOGIN] Token guardado")
       
-      console.log("✅ Login exitoso, token guardado")
-      console.log("🔄 Redirigiendo a /admin/projects...")
-
-      // Redirigir
+      // Verificar que se guardó
+      const savedToken = localStorage.getItem("admin_token")
+      console.log("🔍 [LOGIN] Verificación token guardado:", { exists: !!savedToken, length: savedToken?.length })
+      
+      console.log("🔄 [LOGIN] Iniciando redirect a /admin/projects...")
+      console.log("🔄 [LOGIN] Método 1: router.push")
       router.push("/admin/projects")
       
+      console.log("⏱️ [LOGIN] Esperando 100ms para fallback...")
       setTimeout(() => {
+        console.log("🔄 [LOGIN] Método 2: window.location.href")
         window.location.href = "/admin/projects"
       }, 100)
       
+      console.log("✅ [LOGIN] handleSubmit completado (esperando redirects)")
+      
     } catch (err: any) {
-      console.error("❌ Error:", err)
+      console.error("💥 [LOGIN] Error capturado:", err)
+      console.error("💥 [LOGIN] Error message:", err.message)
+      console.error("💥 [LOGIN] Error stack:", err.stack)
       setError(err.message || "Error al iniciar sesión")
     } finally {
+      console.log("🏁 [LOGIN] Finally block - setLoading(false)")
       setLoading(false)
     }
   }
 
-  return (
+  // ... resto del componente
+    return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
@@ -73,10 +104,7 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label 
-                htmlFor="email" 
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                 Email
               </label>
               <input
@@ -91,10 +119,7 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label 
-                htmlFor="password" 
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
                 Contraseña
               </label>
               <input
