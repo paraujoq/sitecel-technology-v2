@@ -1,5 +1,3 @@
-"use client"
-
 import { API_URL } from "@/lib/config"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
@@ -19,8 +17,8 @@ export default function LoginPage() {
     try {
       // Llamar al backend de autenticación
       const formData = new URLSearchParams()
-      formData.append('username', email) // OAuth2 usa 'username' aunque sea email
-      formData.append('password', password)
+      formData.append("username", email)
+      formData.append("password", password)
 
       const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
@@ -39,28 +37,28 @@ export default function LoginPage() {
       
       // Guardar token en localStorage
       localStorage.setItem("admin_token", data.access_token)
-
+      
       console.log("✅ Login exitoso, token guardado")
       console.log("🔄 Redirigiendo a /admin/projects...")
 
-      // Redirigir - usar window.location como fallback
-      try {
-        router.push("/admin/projects")
-        
-        // Fallback si router.push no funciona
-        setTimeout(() => {
-          window.location.href = "/admin/projects"
-        }, 100)
-      } catch (err) {
-        console.error("❌ Error en redirect:", err)
+      // Redirigir
+      router.push("/admin/projects")
+      
+      setTimeout(() => {
         window.location.href = "/admin/projects"
-      }
+      }, 100)
+      
+    } catch (err: any) {
+      console.error("❌ Error:", err)
+      setError(err.message || "Error al iniciar sesión")
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
       <div className="max-w-md w-full">
-        {/* Logo y título */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
             Sitecel Technology
@@ -68,14 +66,12 @@ export default function LoginPage() {
           <p className="text-gray-600">Panel de Administración</p>
         </div>
 
-        {/* Card de login */}
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <h2 className="text-2xl font-semibold text-gray-900 mb-6">
             Iniciar Sesión
           </h2>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Email */}
             <div>
               <label 
                 htmlFor="email" 
@@ -94,7 +90,6 @@ export default function LoginPage() {
               />
             </div>
 
-            {/* Password */}
             <div>
               <label 
                 htmlFor="password" 
@@ -113,14 +108,12 @@ export default function LoginPage() {
               />
             </div>
 
-            {/* Error message */}
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
                 {error}
               </div>
             )}
 
-            {/* Submit button */}
             <button
               type="submit"
               disabled={loading}
@@ -131,7 +124,6 @@ export default function LoginPage() {
           </form>
         </div>
 
-        {/* Footer */}
         <p className="text-center text-sm text-gray-600 mt-8">
           © 2025 Sitecel Technology SpA
         </p>
