@@ -39,7 +39,7 @@ export default function ProjectsPage() {
   const fetchProjects = async () => {
     setLoading(true)
     try {
-      let url = "${API_URL}/projects"
+      let url = `${API_URL}/projects`
       
       if (filter === "published") {
         url += "?published=true"

@@ -35,7 +35,7 @@ export default function AdminLayout({
 
       // Validar token con el backend
       try {
-        const response = await fetch("${API_URL}/auth/me", {
+        const response = await fetch(`${API_URL}/auth/me`, {
           headers: {
             "Authorization": `Bearer ${token}`
           }
