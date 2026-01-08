@@ -1,3 +1,5 @@
+"use client"
+
 import { API_URL } from "@/lib/config"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
@@ -15,7 +17,6 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      // Llamar al backend de autenticación
       const formData = new URLSearchParams()
       formData.append("username", email)
       formData.append("password", password)
@@ -34,22 +35,14 @@ export default function LoginPage() {
       }
 
       const data = await response.json()
-      
-      // Guardar token en localStorage
       localStorage.setItem("admin_token", data.access_token)
       
-      console.log("✅ Login exitoso, token guardado")
-      console.log("🔄 Redirigiendo a /admin/projects...")
-
-      // Redirigir
       router.push("/admin/projects")
-      
       setTimeout(() => {
         window.location.href = "/admin/projects"
       }, 100)
       
     } catch (err: any) {
-      console.error("❌ Error:", err)
       setError(err.message || "Error al iniciar sesión")
     } finally {
       setLoading(false)
@@ -73,10 +66,7 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label 
-                htmlFor="email" 
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                 Email
               </label>
               <input
@@ -91,10 +81,7 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label 
-                htmlFor="password" 
-                className="block text-sm font-medium text-gray-700 mb-2"
-              >
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
                 Contraseña
               </label>
               <input
