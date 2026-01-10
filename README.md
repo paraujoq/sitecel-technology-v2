@@ -290,3 +290,6 @@ This project is licensed under the MIT License - see [LICENSE](./LICENSE) file f
 <p align="center">
   <sub>Building the future of Telecom & IT Infrastructure in Chile 🇨🇱</sub>
 </p>
+
+ #   R e v e r t e d   t o   s t a b l e   v e r s i o n  
+ 
