@@ -12,6 +12,7 @@ export default function ViewProjectPage() {
   const [project, setProject] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
+  const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
     fetchProject()
@@ -33,6 +34,29 @@ export default function ViewProjectPage() {
       setLoading(false)
     }
   }
+
+const handleDelete = async () => {
+  if (!confirm("¿Estás seguro de eliminar este proyecto? Esta acción no se puede deshacer.")) {
+    return
+  }
+
+  setDeleting(true)
+  try {
+    const response = await fetch(`http://127.0.0.1:8000/api/v1/projects/${projectId}`, {
+      method: "DELETE"
+    })
+
+    if (!response.ok) {
+      throw new Error("Error al eliminar el proyecto")
+    }
+
+    // Redirigir a la lista
+    router.push("/admin/projects")
+  } catch (err: any) {
+    alert(`Error: ${err.message}`)
+    setDeleting(false)
+  }
+}
 
   if (loading) {
     return (
@@ -274,6 +298,13 @@ export default function ViewProjectPage() {
                 >
                   Ver en Sitio Público
                 </Link>
+                <button
+                  onClick={handleDelete}
+                  disabled={deleting}
+                  className="block w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-center rounded-lg transition disabled:opacity-50"
+                >
+                  {deleting ? "Eliminando..." : "Eliminar Proyecto"}
+                </button>
               </div>
             </div>
           </div>

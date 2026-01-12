@@ -1,8 +1,12 @@
 import os
 from typing import List
+from dotenv import load_dotenv
 
 class Settings:
     def __init__(self):
+        # IMPORTANTE: Cargar .env antes de leer variables
+        load_dotenv()
+        
         # DEBUG: Imprimir para ver qué está leyendo
         db_url = os.environ.get("DATABASE_URL")
         print(f"🔍 DEBUG: DATABASE_URL from env = {db_url[:50] if db_url else 'NOT SET'}...")
@@ -15,7 +19,7 @@ class Settings:
         self.ACCESS_TOKEN_EXPIRE_MINUTES = int(os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES", "60"))
         self.ENVIRONMENT = os.environ.get("ENVIRONMENT", "development")
         self.DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
-        self.ALLOWED_ORIGINS = os.environ.get("ALLOWED_ORIGINS", "https://sitecel.cl,https://www.sitecel.cl")
+        self.ALLOWED_ORIGINS = os.environ.get("ALLOWED_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000")
         
         # Validar
         if not self.DATABASE_URL:

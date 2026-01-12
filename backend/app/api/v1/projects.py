@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from uuid import UUID
-
+from slugify import slugify  # Asegúrate que esté importado
 from app.api.deps import get_db
 from app.models.project import Project, ProjectImage, ProjectVideo
 from app.schemas.project import ( ProjectCreate, ProjectUpdate, ProjectRead, ProjectList )
@@ -27,13 +27,26 @@ def create_project(
     - **videos**: Lista de videos (opcional)
     """
     
-    # Verificar que el slug no exista
-    existing_project = db.query(Project).filter(Project.slug == project_in.slug).first()
-    if existing_project:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Project with slug '{project_in.slug}' already exists"
-        )
+   # Generar slug automáticamente si no viene
+    if not project_in.slug:
+        base_slug = slugify(project_in.title)
+        slug = base_slug
+        counter = 1
+        
+        # Asegurar que el slug sea único
+        while db.query(Project).filter(Project.slug == slug).first():
+            slug = f"{base_slug}-{counter}"
+            counter += 1
+        
+        project_in.slug = slug
+    else:
+        # Verificar que el slug no exista si viene provisto
+        existing_project = db.query(Project).filter(Project.slug == project_in.slug).first()
+        if existing_project:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Project with slug '{project_in.slug}' already exists"
+            )
     
     # Crear proyecto
     db_project = Project(

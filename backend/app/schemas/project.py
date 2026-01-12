@@ -55,7 +55,7 @@ class ProjectVideoRead(ProjectVideoBase):
 
 class ProjectBase(BaseModel):
     title: str = Field(..., min_length=3, max_length=300)
-    slug: str = Field(..., min_length=3, max_length=255)
+    slug: Optional[str] = None
     description: Optional[str] = None
     category: str = Field(..., max_length=50)
     published: bool = False
@@ -79,7 +79,7 @@ class ProjectCreate(ProjectBase):
 
 class ProjectUpdate(BaseModel):
     title: Optional[str] = Field(None, min_length=3, max_length=300)
-    slug: Optional[str] = Field(None, min_length=3, max_length=255)
+    slug: Optional[str] = None
     description: Optional[str] = None
     category: Optional[str] = Field(None, max_length=50)
     published: Optional[bool] = None
