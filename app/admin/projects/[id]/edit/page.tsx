@@ -3,12 +3,13 @@
 import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import ProjectForm from "@/components/admin/ProjectForm"
-import { API_URL } from "@/lib/config"
 
 export default function EditProjectPage() {
   const params = useParams()
   const router = useRouter()
   const projectId = params.id as string
+  
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1"
   
   const [project, setProject] = useState<any>(null)
   const [loading, setLoading] = useState(true)
@@ -20,7 +21,7 @@ export default function EditProjectPage() {
 
   const fetchProject = async () => {
     try {
-      const response = await fetch(`http://${API_URL}/api/v1/projects/${projectId}`)
+      const response = await fetch(`${API_URL}/projects/${projectId}`)
       
       if (!response.ok) {
         throw new Error("Proyecto no encontrado")
@@ -91,8 +92,8 @@ export default function EditProjectPage() {
             duration: project.duration || "",
             tags: project.tags || [],
             highlights: project.highlights || [],
-            images: project.images || [],  // ← AGREGAR
-            videos: project.videos || []   // ← AGREGAR
+            images: project.images || [],
+            videos: project.videos || []
           }}
         />
       </div>
