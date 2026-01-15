@@ -56,11 +56,11 @@ export default function LoginPage() {
       console.log("✅ [LOGIN] Data recibida:", { hasToken: !!data.access_token, tokenLength: data.access_token?.length })
       
       console.log("💾 [LOGIN] Guardando token en localStorage...")
-      localStorage.setItem("admin_token", data.access_token)
+      localStorage.setItem("token", data.access_token)
       console.log("✅ [LOGIN] Token guardado")
       
       // Verificar que se guardó
-      const savedToken = localStorage.getItem("admin_token")
+      const savedToken = localStorage.getItem("token")
       console.log("🔍 [LOGIN] Verificación token guardado:", { exists: !!savedToken, length: savedToken?.length })
       
       console.log("🔄 [LOGIN] Iniciando redirect a /admin/projects...")
