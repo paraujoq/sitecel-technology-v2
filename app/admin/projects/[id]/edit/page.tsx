@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import ProjectForm from "@/components/admin/ProjectForm"
+import { API_URL } from "@/lib/config"
 
 export default function EditProjectPage() {
   const params = useParams()
@@ -19,7 +20,7 @@ export default function EditProjectPage() {
 
   const fetchProject = async () => {
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/v1/projects/${projectId}`)
+      const response = await fetch(`http://${API_URL}/api/v1/projects/${projectId}`)
       
       if (!response.ok) {
         throw new Error("Proyecto no encontrado")

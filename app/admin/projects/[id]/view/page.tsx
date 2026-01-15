@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import Link from "next/link"
+import { API_URL } from "@/lib/config"
 
 export default function ViewProjectPage() {
   const params = useParams()
@@ -20,7 +21,9 @@ export default function ViewProjectPage() {
 
   const fetchProject = async () => {
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/v1/projects/${projectId}`)
+      const response = await fetch(`${API_URL}/projects/${projectId}`)
+      const response = await fetch(`${API_URL}/auth/login`)
+      //const response = await fetch(`http://127.0.0.1:8000/api/v1/projects/${projectId}`)
       
       if (!response.ok) {
         throw new Error("Proyecto no encontrado")
@@ -42,9 +45,11 @@ const handleDelete = async () => {
 
   setDeleting(true)
   try {
-    const response = await fetch(`http://127.0.0.1:8000/api/v1/projects/${projectId}`, {
-      method: "DELETE"
-    })
+    const response = await fetch(`${API_URL}/projects/${projectId}`)
+    const response = await fetch(`${API_URL}/auth/login`)
+    //const response = await fetch(`http://127.0.0.1:8000/api/v1/projects/${projectId}`, {
+    //  method: "DELETE"
+    //})
 
     if (!response.ok) {
       throw new Error("Error al eliminar el proyecto")

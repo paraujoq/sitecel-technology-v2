@@ -52,7 +52,9 @@ export default function ProjectDetailPage() {
 
   const fetchProject = async () => {
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/v1/projects/${projectId}`)
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1"
+      const response = await fetch(`${API_URL}/projects/${projectId}`)
+      //const response = await fetch(`http://127.0.0.1:8000/api/v1/projects/${projectId}`)
       
       if (!response.ok) {
         throw new Error("Proyecto no encontrado")
@@ -74,9 +76,11 @@ export default function ProjectDetailPage() {
 
     setDeleting(true)
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/v1/projects/${projectId}`, {
-        method: "DELETE"
-      })
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1"
+      const response = await fetch(`${API_URL}/projects/${projectId}`) 
+      //const response = await fetch(`http://127.0.0.1:8000/api/v1/projects/${projectId}`, {
+      //  method: "DELETE"
+      //}
 
       if (!response.ok) {
         throw new Error("Error al eliminar el proyecto")
@@ -92,9 +96,11 @@ export default function ProjectDetailPage() {
 
   const handleTogglePublish = async () => {
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/v1/projects/${projectId}/publish`, {
-        method: "PATCH"
-      })
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1"
+      const response = await fetch(`${API_URL}/projects/${projectId}`)
+      //const response = await fetch(`http://127.0.0.1:8000/api/v1/projects/${projectId}/publish`, {
+      //  method: "PATCH"
+      //})
 
       if (!response.ok) {
         throw new Error("Error al cambiar estado de publicación")
