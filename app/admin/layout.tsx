@@ -29,7 +29,7 @@ export default function AdminLayout({
       console.log("🔍 [LAYOUT] Checking authentication...")
       
       // Obtener token
-      const token = localStorage.getItem("admin_token")
+      const token = localStorage.getItem("token")
       console.log("📦 [LAYOUT] Token from localStorage:", { exists: !!token, length: token?.length })
 
       // Si no hay token, redirigir a login
@@ -52,7 +52,7 @@ export default function AdminLayout({
 
         if (!response.ok) {
           console.error("❌ [LAYOUT] Token invalid or expired, redirecting to login")
-          localStorage.removeItem("admin_token")
+          localStorage.removeItem("token")
           router.push("/admin/login")
           return
         }
@@ -61,7 +61,7 @@ export default function AdminLayout({
         setIsAuthenticated(true)
       } catch (error) {
         console.error("💥 [LAYOUT] Error validating token:", error)
-        localStorage.removeItem("admin_token")
+        localStorage.removeItem("token")
         router.push("/admin/login")
       } finally {
         console.log("🏁 [LAYOUT] Auth check complete")
