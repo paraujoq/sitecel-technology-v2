@@ -18,3 +18,6 @@ https://i.imgur.com/3kjjTYm.jpeg
 Videos (se suben en google drive como "compartidos solo lectura")
 https://drive.google.com/file/d/1rchD06LmpXTY-nrvr050x0cM_6kjHObk/view?usp=sharing -> esta última parte se cambia por la palabra "preview" antes de subirlo
     https://drive.google.com/file/d/1rchD06LmpXTY-nrvr050x0cM_6kjHObk/preview
+
+API KEY google-gemini AIzaSyA5mXqM2AQktK5ltlFFUfr9C3t55YO30FA
+

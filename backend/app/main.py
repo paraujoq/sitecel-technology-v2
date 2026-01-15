@@ -1,6 +1,6 @@
 ﻿from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.v1 import projects, auth
+from app.api.v1 import projects, auth, chat
 
 app = FastAPI(
     title="Sitecel API",
@@ -19,6 +19,7 @@ app.add_middleware(
 # Incluir router de proyectos
 app.include_router(projects.router, prefix="/api/v1", tags=["projects"])
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
+app.include_router(chat.router, prefix="/api/v1", tags=["chat"])
 
 @app.get("/")
 def root():
