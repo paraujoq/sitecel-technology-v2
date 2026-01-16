@@ -1,0 +1,23 @@
+VoLTE
+Images
+https://i.imgur.com/3TmkrvT.png
+https://i.imgur.com/tCFMoFq.jpeg
+
+Videos
+
+Filtración
+Images (se suben en Imgur como "no listadas")
+https://i.imgur.com/iQbGN2S.jpeg
+https://i.imgur.com/Ft0YgUA.jpeg
+https://i.imgur.com/Ft0YgUA.jpeg
+https://i.imgur.com/hqRqmi3.jpeg
+https://i.imgur.com/beCbZQ3.jpeg
+https://i.imgur.com/576IlJA.jpeg
+https://i.imgur.com/3kjjTYm.jpeg
+
+Videos (se suben en google drive como "compartidos solo lectura")
+https://drive.google.com/file/d/1rchD06LmpXTY-nrvr050x0cM_6kjHObk/view?usp=sharing -> esta última parte se cambia por la palabra "preview" antes de subirlo
+    https://drive.google.com/file/d/1rchD06LmpXTY-nrvr050x0cM_6kjHObk/preview
+
+API KEY google-gemini AIzaSyA5mXqM2AQktK5ltlFFUfr9C3t55YO30FA
+
