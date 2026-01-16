@@ -1,14 +1,15 @@
 # 🏗️ Sitecel Technology - Corporate Platform v2
 
-[![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.104-green)](https://fastapi.tiangolo.com/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-green)](https://fastapi.tiangolo.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 
 > Modern corporate platform for Sitecel Technology SpA - Telecom & IT Infrastructure Company based in Santiago, Chile.
 
-**Live Site:** [www.sitecel.cl](https://www.sitecel.cl)
+**Live Site:** [www.sitecel.cl](https://www.sitecel.cl)  
+**Admin Panel:** [www.sitecel.cl/admin](https://www.sitecel.cl/admin) 🔐
 
 ---
 
@@ -17,9 +18,10 @@
 - [About](#about)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
+- [Architecture](#architecture)
 - [Getting Started](#getting-started)
 - [Development](#development)
+- [Deployment](#deployment)
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
 - [License](#license)
@@ -49,51 +51,126 @@ This project serves as both:
 
 ## ✨ Features
 
-### ✅ Current (v1 - Deployed)
+### ✅ Completed & Live
 - 🎨 **Responsive Design** - Mobile-first approach with Tailwind CSS
-- ⚡ **Fast Performance** - Next.js 14 with App Router and Server Components
+- ⚡ **Fast Performance** - Next.js 16 with App Router and ISR (5min revalidation)
+- 🔐 **Admin Panel** - Complete CMS with authentication (JWT)
+- 📊 **Project Management** - Full CRUD for projects with rich media
+- 🖼️ **Media Management** - Image galleries and embedded videos (YouTube, Google Drive)
+- 🤖 **AI Chatbot** - Customer support powered by Google Gemini 2.0
+- 🗄️ **REST API** - FastAPI backend with PostgreSQL database
 - 📝 **Contact Form** - Functional form with validation
 - 🎯 **SEO Optimized** - Meta tags, sitemap, structured data
-- 🚀 **CI/CD Pipeline** - Automated deployment via Vercel
+- 🚀 **CI/CD Pipeline** - Automated deployment via Vercel & Render
 - 🌐 **Custom Domain** - Production ready at sitecel.cl
 
-### 🚧 In Progress (v2 - See [Roadmap](./ROADMAP.md))
-- 🔐 **Admin Panel** - Private CMS for project management
-- 📊 **Project Portfolio** - Dynamic CRUD with PostgreSQL + API
-- 🤖 **AI Chatbot** - ML-powered assistant for customer inquiries
-- 📱 **Rich Media** - Image galleries and video embeds
-- 🔍 **Advanced Search** - Filter and discover projects
+### 🚧 Roadmap (See [Issues](https://github.com/paraujoq/sitecel-technology-v2/issues))
+- 📧 **Email Notifications** - Contact form submissions
+- 📊 **Analytics Dashboard** - Usage metrics and insights
+- 🔍 **Advanced Search** - Full-text search and filters
+- 🖼️ **Image Optimization** - Next.js Image + CDN
+- ✅ **Testing Suite** - E2E and unit tests
+- 📚 **API Documentation** - Enhanced Swagger docs
 
 ---
 
 ## 🛠️ Tech Stack
 
 ### Frontend
-- **Framework:** [Next.js 14](https://nextjs.org/) (App Router, React Server Components)
+- **Framework:** [Next.js 16](https://nextjs.org/) (App Router, React Server Components)
 - **Language:** [TypeScript](https://www.typescriptlang.org/)
 - **Styling:** [Tailwind CSS](https://tailwindcss.com/)
-- **UI Components:** [Shadcn/ui](https://ui.shadcn.com/)
-- **Forms:** React Hook Form + Zod validation
-- **State Management:** Zustand / TanStack Query
+- **UI Components:** Custom components with Tailwind
+- **Forms:** Native form handling with validation
+- **State Management:** React hooks + URL state
+- **Deployment:** [Vercel](https://vercel.com)
 
-### Backend (Coming Soon - Fase 1)
+### Backend
 - **Framework:** [FastAPI](https://fastapi.tiangolo.com/) (Python 3.11+)
-- **Database:** PostgreSQL 15+
+- **Database:** [PostgreSQL 15](https://www.postgresql.org/) on [Neon](https://neon.tech)
 - **ORM:** SQLAlchemy 2.0 (Async)
 - **Validation:** Pydantic v2
-- **Auth:** JWT (python-jose)
+- **Auth:** JWT with python-jose
+- **Deployment:** [Render](https://render.com)
 
-### AI/ML (Coming Soon - Fase 2)
-- **LLM:** OpenAI GPT-4 / Anthropic Claude
-- **Embeddings:** OpenAI text-embedding-3
-- **Vector DB:** Pinecone or pgvector
-- **Framework:** LangChain / LlamaIndex
+### AI/ML
+- **LLM:** Google Gemini 2.0 Flash
+- **Framework:** Google AI SDK (generative-ai-python)
+- **Use Case:** Customer support chatbot
 
-### DevOps
-- **Hosting:** Vercel (frontend) + Railway/Fly.io (backend planned)
-- **CI/CD:** GitHub Actions
-- **Monitoring:** Sentry (errors) + PostHog (analytics, planned)
-- **File Storage:** Cloudinary (planned)
+### DevOps & Infrastructure
+- **Version Control:** Git + GitHub
+- **Frontend Hosting:** Vercel (with ISR)
+- **Backend Hosting:** Render (Free tier)
+- **Database:** Neon (Serverless Postgres)
+- **CI/CD:** Automatic deployments on push to `main`
+- **Monitoring:** Browser console (Sentry planned)
+
+---
+
+## 🏗️ Architecture
+
+```
+┌─────────────────────────────────────────────────┐
+│           Frontend (Next.js 16)                  │
+│                                                  │
+│  - Server Components (ISR 5min)                 │
+│  - Client Components (Auth, Forms, Chat)        │
+│  - Public Routes: /, /proyectos, /servicios    │
+│  - Protected Routes: /admin/*                   │
+│                                                  │
+│  Deployed on: Vercel                            │
+│  URL: https://www.sitecel.cl                    │
+└────────────────┬────────────────────────────────┘
+                 │
+                 │ HTTPS/REST
+                 │
+┌────────────────▼────────────────────────────────┐
+│         Backend API (FastAPI)                   │
+│                                                  │
+│  Endpoints:                                     │
+│  - /api/v1/projects (CRUD)                     │
+│  - /api/v1/auth (Login, Verify)                │
+│  - /api/v1/chat (AI Chatbot)                   │
+│                                                  │
+│  Deployed on: Render                            │
+│  URL: sitecel-technology-v2.onrender.com       │
+└────────────────┬────────────────────────────────┘
+                 │
+    ┌────────────┼────────────┐
+    │            │            │
+    ▼            ▼            ▼
+┌─────────┐ ┌─────────┐ ┌──────────┐
+│PostgreSQL│ │ Google  │ │ Storage  │
+│  (Neon)  │ │ Gemini  │ │(Planned) │
+│          │ │   AI    │ │          │
+│Projects  │ │Chatbot  │ │Images/   │
+│Users     │ │         │ │Videos    │
+│Images    │ │         │ │          │
+│Videos    │ │         │ │          │
+└─────────┘ └─────────┘ └──────────┘
+```
+
+### Data Flow Examples
+
+**1. Public User views projects:**
+```
+User → Next.js (ISR cached) → [If cache expired] → FastAPI → PostgreSQL
+                           → Rendered HTML
+```
+
+**2. Admin creates project:**
+```
+Admin → Login (JWT) → /admin/projects/new → Form Submit
+      → FastAPI /projects (POST) → PostgreSQL INSERT
+      → Success → Redirect to /admin/projects
+```
+
+**3. User chats with bot:**
+```
+User → ChatWidget (Client) → FastAPI /chat
+     → Gemini AI API → Response → User
+```
 
 ---
 
@@ -101,40 +178,50 @@ This project serves as both:
 
 ```
 sitecel-technology-v2/
-├── frontend/                # Next.js application
-│   ├── app/                 # App Router pages
-│   │   ├── (root)/         # Public pages
-│   │   ├── admin/          # Admin panel (protected)
-│   │   └── api/            # API routes (if needed)
-│   ├── components/         # React components
-│   │   ├── ui/             # Shadcn/ui components
-│   │   ├── sections/       # Page sections
-│   │   └── shared/         # Reusable components
-│   ├── lib/                # Utilities and helpers
-│   ├── public/             # Static assets
-│   └── styles/             # Global styles
+├── app/                      # Next.js App Router
+│   ├── (public)/            # Public pages
+│   │   ├── page.tsx         # Home
+│   │   ├── proyectos/       # Projects gallery
+│   │   ├── servicios/       # Services
+│   │   └── contacto/        # Contact
+│   ├── admin/               # Protected admin area
+│   │   ├── layout.tsx       # Auth layout
+│   │   ├── login/           # Login page
+│   │   ├── projects/        # Project CRUD
+│   │   └── dashboard/       # Admin dashboard
+│   └── api/                 # API routes (if needed)
 │
-├── backend/                # FastAPI application (coming soon)
-│   ├── app/
-│   │   ├── api/            # API endpoints
-│   │   ├── core/           # Config, security
-│   │   ├── models/         # SQLAlchemy models
-│   │   ├── schemas/        # Pydantic schemas
-│   │   └── services/       # Business logic
-│   ├── alembic/            # Database migrations
-│   └── tests/              # pytest tests
+├── components/              # React components
+│   ├── admin/              # Admin-specific components
+│   │   ├── ProjectForm.tsx
+│   │   └── Sidebar.tsx
+│   ├── ChatWidget.tsx      # AI chatbot
+│   ├── ProjectCard.tsx     # Project card (public)
+│   └── Navbar.tsx          # Navigation
 │
-├── ml-chatbot/             # AI chatbot (coming soon)
-│   ├── embeddings/         # Vector generation
-│   ├── rag/                # RAG pipeline
-│   └── api/                # Chat API
+├── lib/                    # Utilities
+│   ├── api.ts             # API client functions
+│   ├── config.ts          # Environment config
+│   └── utils.ts           # Helper functions
 │
-├── docs/                   # Documentation
-│   ├── ADRs/               # Architecture Decision Records
-│   └── guides/             # Development guides
+├── public/                # Static assets
+│   ├── images/
+│   └── favicon.ico
 │
-├── ROADMAP.md              # Product roadmap
-└── README.md               # This file
+└── styles/                # Global styles
+    └── globals.css
+
+Backend (separate repo/directory - not included here):
+└── app/
+    ├── api/v1/
+    │   ├── auth.py       # Authentication
+    │   ├── projects.py   # Projects CRUD
+    │   └── chat.py       # AI Chatbot
+    ├── models/           # SQLAlchemy models
+    ├── schemas/          # Pydantic schemas
+    └── core/
+        ├── config.py     # Settings
+        └── security.py   # JWT handling
 ```
 
 ---
@@ -144,6 +231,7 @@ sitecel-technology-v2/
 ### Prerequisites
 - Node.js 18+ and npm/pnpm
 - Git
+- (Optional) Python 3.11+ for backend development
 
 ### Installation
 
@@ -155,7 +243,6 @@ sitecel-technology-v2/
 
 2. **Install dependencies**
    ```bash
-   cd frontend
    npm install
    # or
    pnpm install
@@ -166,10 +253,10 @@ sitecel-technology-v2/
    cp .env.example .env.local
    ```
    
-   Edit `.env.local` with your values:
+   Edit `.env.local`:
    ```env
+   NEXT_PUBLIC_API_URL=https://sitecel-technology-v2.onrender.com/api/v1
    NEXT_PUBLIC_SITE_URL=http://localhost:3000
-   # Add other variables as needed
    ```
 
 4. **Run development server**
@@ -177,7 +264,7 @@ sitecel-technology-v2/
    npm run dev
    ```
    
-   Open [http://localhost:3000](http://localhost:3000) in your browser.
+   Open [http://localhost:3000](http://localhost:3000)
 
 ---
 
@@ -186,7 +273,7 @@ sitecel-technology-v2/
 ### Available Scripts
 
 ```bash
-npm run dev          # Start development server
+npm run dev          # Start development server (localhost:3000)
 npm run build        # Build for production
 npm run start        # Start production server
 npm run lint         # Run ESLint
@@ -195,37 +282,79 @@ npm run type-check   # Check TypeScript types
 
 ### Code Style
 
-- **Formatter:** Prettier
+- **Formatter:** Prettier (auto-format on save recommended)
 - **Linter:** ESLint with Next.js config
 - **Commit Convention:** Conventional Commits
 
 ```bash
 # Example commit messages
-git commit -m "feat: add project gallery component"
-git commit -m "fix: resolve mobile navigation issue"
-git commit -m "docs: update README with API endpoints"
+git commit -m "feat: add project search functionality"
+git commit -m "fix: resolve mobile navigation bug"
+git commit -m "perf: optimize ISR revalidation time"
+git commit -m "docs: update README with architecture diagram"
 ```
 
 ### Git Workflow
 
-1. Create feature branch: `git checkout -b feature/amazing-feature`
-2. Commit changes: `git commit -m "feat: add amazing feature"`
-3. Push to branch: `git push origin feature/amazing-feature`
-4. Open Pull Request
+1. **Ensure you're on `main`:** `git checkout main`
+2. **Pull latest:** `git pull origin main`
+3. **Create branch** (optional): `git checkout -b feature/my-feature`
+4. **Make changes and commit:**
+   ```bash
+   git add .
+   git commit -m "feat: add amazing feature"
+   ```
+5. **Push:** `git push origin main` (or your branch)
+6. **Automatic deployment:** Vercel detects push and deploys
+
+---
+
+## 🌐 Deployment
+
+### Frontend (Vercel)
+- **Automatic:** Pushes to `main` trigger deployment
+- **URL:** https://www.sitecel.cl
+- **Environment Variables:** Set in Vercel dashboard
+  - `NEXT_PUBLIC_API_URL`
+
+### Backend (Render)
+- **Automatic:** Pushes to `main` trigger deployment
+- **URL:** https://sitecel-technology-v2.onrender.com
+- **Free tier:** May spin down after inactivity (50s cold start)
+- **Environment Variables:** Set in Render dashboard
+  - `DATABASE_URL` (Neon PostgreSQL)
+  - `SECRET_KEY` (JWT)
+  - `GEMINI_API_KEY` (Google AI)
+
+### Database (Neon)
+- **Serverless PostgreSQL**
+- **Automatic backups**
+- **Connection pooling enabled**
 
 ---
 
 ## 🗺️ Roadmap
 
-See [ROADMAP.md](./ROADMAP.md) for detailed product roadmap.
+**Current Status:** ✅ **Phase 1 Complete** - Core functionality live
 
-**High-level phases:**
-- ✅ **Phase 0:** Corporate Website (Completed)
-- 🚀 **Phase 1:** CMS & Project Management (Q1 2025)
-- 🤖 **Phase 2:** AI-Powered Chatbot (Q2 2025)
-- 🔧 **Phase 3:** Optimization & Testing (Q2 2025)
+### Completed
+- ✅ Phase 0: Corporate Website
+- ✅ Phase 1: Admin Panel & CMS
+- ✅ Phase 1.5: AI Chatbot Integration
 
-Track progress in [GitHub Projects](https://github.com/paraujoq/sitecel-technology-v2/projects).
+### Up Next (Q1 2025)
+- 📧 Email notifications (contact form)
+- 🔍 Advanced search & filters
+- 📊 Analytics dashboard
+- 🖼️ Image optimization (Next.js Image + CDN)
+
+### Future (Q2 2025+)
+- ✅ Testing suite (E2E + Unit)
+- 🔐 Role-based access control (if team grows)
+- 📱 Mobile app (React Native - maybe)
+- 🌍 Internationalization (EN/ES)
+
+Track progress: [GitHub Issues](https://github.com/paraujoq/sitecel-technology-v2/issues) & [Projects](https://github.com/paraujoq/sitecel-technology-v2/projects)
 
 ---
 
@@ -233,11 +362,17 @@ Track progress in [GitHub Projects](https://github.com/paraujoq/sitecel-technolo
 
 This is primarily a learning project, but contributions are welcome!
 
-1. **Report Bugs:** Open an issue with `bug` label
-2. **Suggest Features:** Open an issue with `enhancement` label
-3. **Submit PRs:** Follow git workflow above
+### How to Contribute
+1. **Fork the repo**
+2. **Create your feature branch:** `git checkout -b feature/AmazingFeature`
+3. **Commit your changes:** `git commit -m 'feat: add amazing feature'`
+4. **Push to the branch:** `git push origin feature/AmazingFeature`
+5. **Open a Pull Request**
 
-Please read [CONTRIBUTING.md](./CONTRIBUTING.md) (coming soon) for details.
+### Reporting Issues
+- **Bug reports:** Use `bug` label
+- **Feature requests:** Use `enhancement` label
+- **Questions:** Use `question` label
 
 ---
 
@@ -245,32 +380,45 @@ Please read [CONTRIBUTING.md](./CONTRIBUTING.md) (coming soon) for details.
 
 This project is licensed under the MIT License - see [LICENSE](./LICENSE) file for details.
 
-**Note:** The Sitecel Technology brand, logo, and content are © 2025 Sitecel Technology SpA.
+**Note:** The Sitecel Technology brand, logo, and business content are © 2025 Sitecel Technology SpA. Code is MIT licensed.
 
 ---
 
 ## 📬 Contact
 
 **Sitecel Technology SpA**
-- Website: [www.sitecel.cl](https://www.sitecel.cl)
-- Email: contacto@sitecel.cl
-- Phone: +56 9 9792 8355
+- 🌐 Website: [www.sitecel.cl](https://www.sitecel.cl)
+- 📧 Email: contacto@sitecel.cl
+- 📱 Phone: +56 9 9792 8355
+- 📍 Location: Santiago, Chile
 
 **Project Maintainer:**
-- **Pedro Araujo Quintero** - Director de Proyectos
-- LinkedIn: [linkedin.com/in/pcaq](https://www.linkedin.com/in/pcaq)
-- GitHub: [@paraujoq](https://github.com/paraujoq)
-- Email: pedro.araujoq@gmail.com
+- **Pedro Araujo Quintero** - Director de Proyectos & Developer
+- 💼 LinkedIn: [linkedin.com/in/pcaq](https://www.linkedin.com/in/pcaq)
+- 🐙 GitHub: [@paraujoq](https://github.com/paraujoq)
+- 📧 Email: pedro.araujoq@gmail.com
 
 ---
 
 ## 🙏 Acknowledgments
 
-- [Next.js Documentation](https://nextjs.org/docs)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Shadcn/ui](https://ui.shadcn.com/)
-- [Vercel](https://vercel.com) for hosting
-- [Anthropic Claude](https://www.anthropic.com) for AI assistance during development
+**Technologies & Services:**
+- [Next.js](https://nextjs.org/) & [Vercel](https://vercel.com) - Amazing DX
+- [FastAPI](https://fastapi.tiangolo.com/) - Modern Python API
+- [Tailwind CSS](https://tailwindcss.com/) - Rapid styling
+- [Neon](https://neon.tech) - Serverless Postgres
+- [Render](https://render.com) - Free backend hosting
+- [Google Gemini](https://deepmind.google/technologies/gemini/) - AI chatbot
+
+**Learning Resources:**
+- [Anthropic Claude](https://www.anthropic.com) - AI pair programming assistant
+- [Next.js Docs](https://nextjs.org/docs) - Excellent documentation
+- [FastAPI Tutorial](https://fastapi.tiangolo.com/tutorial/) - Clear examples
+
+**Inspiration:**
+- Modern corporate websites in tech/telecom space
+- Full-stack project best practices
+- The dev community on X/Twitter and LinkedIn
 
 ---
 
@@ -279,17 +427,24 @@ This project is licensed under the MIT License - see [LICENSE](./LICENSE) file f
 ![GitHub repo size](https://img.shields.io/github/repo-size/paraujoq/sitecel-technology-v2)
 ![GitHub last commit](https://img.shields.io/github/last-commit/paraujoq/sitecel-technology-v2)
 ![GitHub issues](https://img.shields.io/github/issues/paraujoq/sitecel-technology-v2)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/paraujoq/sitecel-technology-v2)
+![GitHub stars](https://img.shields.io/github/stars/paraujoq/sitecel-technology-v2?style=social)
+
+**Live Stats:**
+- 🚀 In Production: Yes
+- 📊 Projects Published: 4+
+- 🤖 AI Chatbot: Active
+- ⚡ Uptime: 99%+
 
 ---
 
 <p align="center">
-  Made with ❤️ by <a href="https://www.sitecel.cl">Sitecel Technology SpA</a>
+  Made with ❤️ and ☕ by <a href="https://www.sitecel.cl">Sitecel Technology SpA</a>
 </p>
 
 <p align="center">
   <sub>Building the future of Telecom & IT Infrastructure in Chile 🇨🇱</sub>
 </p>
 
- #   R e v e r t e d   t o   s t a b l e   v e r s i o n  
- 
+<p align="center">
+  <sub>Learning in public | PM → Full Stack Developer Journey</sub>
+</p>
