@@ -1,5 +1,4 @@
-﻿"use client"
-
+"use client"
 
 import { API_URL } from "@/lib/config"
 import { useEffect, useState } from "react"
@@ -26,15 +25,8 @@ export default function ProjectsPage() {
   const [filter, setFilter] = useState<"all" | "published" | "draft">("all")
 
   useEffect(() => {
-    // Verificar autenticaciÃ³n
-    const token = localStorage.getItem("admin_token")
-    if (!token) {
-      router.push("/admin/login")
-      return
-    }
-
     fetchProjects()
-  }, [router, filter])
+  }, [filter])
 
   const fetchProjects = async () => {
     setLoading(true)
@@ -68,21 +60,21 @@ export default function ProjectsPage() {
   }
 
   return (
-     <div className="min-h-screen">
-    {/* Header de la pÃ¡gina */}
-    <div className="bg-white border-b border-gray-200 px-8 py-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Proyectos</h1>
-          <p className="text-gray-600 mt-1">Gestionar todos los proyectos</p>
+    <div className="min-h-screen">
+      {/* Header de la página */}
+      <div className="bg-white border-b border-gray-200 px-8 py-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Proyectos</h1>
+            <p className="text-gray-600 mt-1">Gestionar todos los proyectos</p>
+          </div>
+          <Link
+            href="/admin/projects/new"
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition">
+            + Nuevo Proyecto
+          </Link>
         </div>
-        <Link
-          href="/admin/projects/new"
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition">
-          + Nuevo Proyecto
-        </Link>
       </div>
-    </div>
 
       {/* Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -150,13 +142,13 @@ export default function ProjectsPage() {
                     Proyecto
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    CategorÃ­a
+                    Categoría
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Estado
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    UbicaciÃ³n
+                    Ubicación
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Fecha
