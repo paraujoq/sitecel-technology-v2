@@ -8,7 +8,7 @@ export default function Sidebar() {
   const router = useRouter()
 
   const handleLogout = () => {
-    localStorage.removeItem("admin_token")
+    localStorage.removeItem("token")
     router.push("/admin/login")
   }
 
@@ -100,9 +100,8 @@ export default function Sidebar() {
         </button>
 
         {/* API Docs Link */}
-        
         <a
-          href="http://127.0.0.1:8000/docs"
+          href="https://sitecel-technology-v2.onrender.com/docs"
           target="_blank"
           rel="noopener noreferrer"
           className="w-full flex items-center space-x-3 px-4 py-2 mt-2 text-gray-600 hover:bg-gray-50 rounded-lg transition text-sm"
