@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Servicio para interactuar con la API de Sitecel
  */
 
@@ -42,11 +42,12 @@ export interface ProjectVideo {
 
 /**
  * Obtener todos los proyectos publicados
+ * Usa ISR (Incremental Static Regeneration) - revalida cada hora
  */
 export async function getPublishedProjects(): Promise<Project[]> {
   try {
     const response = await fetch(`${API_BASE_URL}/projects?published=true`, {
-      cache: 'no-store', // Siempre obtener datos frescos
+      next: { revalidate: 3600 } // Revalidar cada hora (3600 segundos)
     })
 
     if (!response.ok) {
@@ -61,14 +62,15 @@ export async function getPublishedProjects(): Promise<Project[]> {
 }
 
 /**
- * Obtener proyectos por categorÃ­a
+ * Obtener proyectos por categoría
+ * Usa ISR - revalida cada hora
  */
 export async function getProjectsByCategory(category: string): Promise<Project[]> {
   try {
     const response = await fetch(
       `${API_BASE_URL}/projects?published=true&category=${category}`,
       {
-        cache: 'no-store',
+        next: { revalidate: 3600 } // Revalidar cada hora
       }
     )
 
@@ -85,10 +87,11 @@ export async function getProjectsByCategory(category: string): Promise<Project[]
 
 /**
  * Obtener un proyecto por slug
+ * Usa ISR - revalida cada hora
  */
 export async function getProjectBySlug(slug: string): Promise<Project | null> {
   try {
-    // Primero obtener todos los proyectos (porque no tenemos endpoint por slug aÃºn)
+    // Primero obtener todos los proyectos (porque no tenemos endpoint por slug aún)
     const projects = await getPublishedProjects()
     const project = projects.find(p => p.slug === slug)
     
@@ -100,7 +103,7 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
 }
 
 /**
- * Obtener categorÃ­as Ãºnicas de proyectos publicados
+ * Obtener categorías únicas de proyectos publicados
  */
 export async function getCategories(): Promise<string[]> {
   try {
@@ -109,6 +112,27 @@ export async function getCategories(): Promise<string[]> {
     return categories
   } catch (error) {
     console.error('Error fetching categories:', error)
+    return []
+  }
+}
+
+/**
+ * Obtener todos los proyectos (incluye borradores)
+ * Usa no-store porque es para el admin (siempre datos frescos)
+ */
+export async function getAllProjects(): Promise<Project[]> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/projects`, {
+      cache: 'no-store' // Admin necesita datos siempre frescos
+    })
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch projects')
+    }
+
+    return response.json()
+  } catch (error) {
+    console.error('Error fetching projects:', error)
     return []
   }
 }

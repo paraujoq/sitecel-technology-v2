@@ -13,15 +13,11 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log("🚀 [LOGIN] Iniciando proceso de login...")
-    
     setError("")
     setLoading(true)
 
     try {
-      // Construir URL completa del endpoint
       const loginUrl = `${API_URL}/auth/login`
-      console.log("🌐 [LOGIN] URL completa:", loginUrl)
 
       const formData = new URLSearchParams()
       formData.append("username", email)
@@ -35,44 +31,30 @@ export default function LoginPage() {
         body: formData
       })
 
-      console.log("📡 [LOGIN] Response:", { 
-        status: response.status, 
-        ok: response.ok,
-        url: response.url 
-      })
-
       if (!response.ok) {
         const errorData = await response.json()
-        console.error("❌ [LOGIN] Error:", errorData)
         throw new Error(errorData.detail || "Credenciales inválidas")
       }
 
       const data = await response.json()
-      console.log("✅ [LOGIN] Login exitoso, token recibido:", { 
-        hasToken: !!data.access_token,
-        tokenLength: data.access_token?.length 
-      })
       
       // Guardar token
       localStorage.setItem("token", data.access_token)
-      console.log("💾 [LOGIN] Token guardado en localStorage")
       
-      // Verificar que se guardó correctamente
+      // Verificar que se guardó
       const savedToken = localStorage.getItem("token")
       if (!savedToken) {
         throw new Error("Error al guardar el token")
       }
-      console.log("✅ [LOGIN] Token verificado en localStorage")
       
-      // Pequeño delay para asegurar que localStorage se actualizó
+      // Delay para asegurar que localStorage se actualizó
       await new Promise(resolve => setTimeout(resolve, 100))
       
-      // Redirigir usando window.location para forzar recarga completa
-      console.log("🔄 [LOGIN] Redirigiendo a /admin/projects")
+      // Redirigir
       window.location.href = "/admin/projects"
       
     } catch (err: any) {
-      console.error("💥 [LOGIN] Error:", err)
+      console.error("Error al iniciar sesión:", err)
       setError(err.message || "Error al iniciar sesión")
       setLoading(false)
     }
@@ -138,11 +120,6 @@ export default function LoginPage() {
               {loading ? "Iniciando sesión..." : "Iniciar Sesión"}
             </button>
           </form>
-
-          {/* Debug info - ELIMINAR EN PRODUCCIÓN */}
-          <div className="mt-4 p-3 bg-gray-100 rounded text-xs font-mono">
-            <p className="text-gray-600">API URL: {API_URL}</p>
-          </div>
         </div>
 
         <p className="text-center text-sm text-gray-600 mt-8">
