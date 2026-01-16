@@ -1,237 +1,221 @@
 "use client"
 
+import { API_URL } from "@/lib/config"
 import { useEffect, useState } from "react"
-import { getPublishedProjects } from "@/lib/api"
+import { useRouter } from "next/navigation"
 import Link from "next/link"
 
-// Mapeo de categorías a nombres legibles
-const categoryNames: Record<string, string> = {
-  "telecom-it": "Telecom & IT",
-  "construccion": "Construcción",
-  "electricidad": "Electricidad",
-  "energias-limpias": "Energías Limpias"
+interface Project {
+  id: string
+  slug: string
+  title: string
+  category: string
+  published: boolean
+  start_date: string | null
+  duration: string | null
+  location: string | null
+  tags: string[]
+  created_at: string
 }
 
-// Colores por categoría
-const categoryColors: Record<string, string> = {
-  "telecom-it": "bg-blue-100 text-blue-800",
-  "construccion": "bg-orange-100 text-orange-800",
-  "electricidad": "bg-yellow-100 text-yellow-800",
-  "energias-limpias": "bg-green-100 text-green-800"
-}
-
-export default function ProyectosPage() {
-  const [projects, setProjects] = useState<any[]>([])
+export default function ProjectsPage() {
+  const router = useRouter()
+  const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
+  const [filter, setFilter] = useState<"all" | "published" | "draft">("all")
 
   useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const data = await getPublishedProjects()
-        setProjects(data)
-      } catch (error) {
-        console.error("Error fetching projects:", error)
-      } finally {
-        setLoading(false)
-      }
-    }
     fetchProjects()
-  }, [])
+  }, [filter])
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Cargando proyectos...</p>
-        </div>
-      </div>
-    )
+  const fetchProjects = async () => {
+    setLoading(true)
+    try {
+      let url = `${API_URL}/projects`
+      
+      if (filter === "published") {
+        url += "?published=true"
+      } else if (filter === "draft") {
+        url += "?published=false"
+      }
+
+      const response = await fetch(url)
+      const data = await response.json()
+      setProjects(data)
+    } catch (error) {
+      console.error("Error fetching projects:", error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const getCategoryBadge = (category: string) => {
+    const colors: Record<string, string> = {
+      "telecom-it": "bg-blue-100 text-blue-800",
+      "construccion": "bg-orange-100 text-orange-800",
+      "electricidad": "bg-yellow-100 text-yellow-800",
+      "energias-limpias": "bg-green-100 text-green-800"
+    }
+    return colors[category] || "bg-gray-100 text-gray-800"
   }
 
   return (
-    <main className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-900 to-blue-700 text-white py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Nuestros Proyectos
-          </h1>
-          <p className="text-xl text-blue-100 max-w-3xl">
-            Portafolio de proyectos ejecutados en telecomunicaciones, electricidad y energías limpias
-          </p>
+    <div className="min-h-screen">
+      {/* Header de la página */}
+      <div className="bg-white border-b border-gray-200 px-8 py-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Proyectos</h1>
+            <p className="text-gray-600 mt-1">Gestionar todos los proyectos</p>
+          </div>
+          <Link
+            href="/admin/projects/new"
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition">
+            + Nuevo Proyecto
+          </Link>
         </div>
-      </section>
+      </div>
 
-      {/* Projects Grid */}
-      <section className="py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {projects.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-gray-600 text-lg">
-                No hay proyectos publicados en este momento.
-              </p>
-            </div>
-          ) : (
-            <>
-              <div className="mb-8">
-                <p className="text-gray-600">
-                  Mostrando {projects.length} {projects.length === 1 ? 'proyecto' : 'proyectos'}
-                </p>
-              </div>
+      {/* Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Filters */}
+        <div className="bg-white rounded-xl shadow-sm p-4 mb-6 border border-gray-200">
+          <div className="flex gap-2">
+            <button
+              onClick={() => setFilter("all")}
+              className={`px-4 py-2 rounded-lg font-medium transition ${
+                filter === "all"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              Todos ({projects.length})
+            </button>
+            <button
+              onClick={() => setFilter("published")}
+              className={`px-4 py-2 rounded-lg font-medium transition ${
+                filter === "published"
+                  ? "bg-green-600 text-white"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              Publicados
+            </button>
+            <button
+              onClick={() => setFilter("draft")}
+              className={`px-4 py-2 rounded-lg font-medium transition ${
+                filter === "draft"
+                  ? "bg-yellow-600 text-white"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              Borradores
+            </button>
+          </div>
+        </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* Projects Table */}
+        {loading ? (
+          <div className="text-center py-12">
+            <div className="text-xl text-gray-600">Cargando proyectos...</div>
+          </div>
+        ) : projects.length === 0 ? (
+          <div className="bg-white rounded-xl shadow-sm p-12 text-center border border-gray-200">
+            <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+            </svg>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">No hay proyectos</h3>
+            <p className="text-gray-600 mb-4">Comienza creando tu primer proyecto</p>
+            <Link
+              href="/admin/projects/new"
+              className="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition"
+            >
+              Crear Proyecto
+            </Link>
+          </div>
+        ) : (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Proyecto
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Categoría
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Estado
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Ubicación
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Fecha
+                  </th>
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Acciones
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
                 {projects.map((project) => (
-                  <Link
-                    key={project.id}
-                    href={`/proyectos/${project.slug}`}
-                    className="group"
-                  >
-                    <article className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                      {/* Imagen del proyecto */}
-                      <div className="aspect-video bg-gray-200 relative overflow-hidden">
-                        {project.images && project.images.length > 0 ? (
-                          <img
-                            src={project.images[0].url}
-                            alt={project.images[0].alt_text || project.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            onError={(e) => {
-                              const img = e.target as HTMLImageElement
-                              img.style.display = 'none'
-                              const parent = img.parentElement
-                              if (parent) {
-                                parent.innerHTML = `
-                                  <div class="w-full h-full bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center">
-                                    <svg class="w-16 h-16 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                    </svg>
-                                  </div>
-                                `
-                              }
-                            }}
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-50 flex items-center justify-center">
-                            <svg
-                              className="w-16 h-16 text-gray-300"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                              />
-                            </svg>
-                          </div>
-                        )}
+                  <tr key={project.id} className="hover:bg-gray-50 transition">
+                    <td className="px-6 py-4">
+                      <div>
+                        <div className="font-medium text-gray-900">{project.title}</div>
+                        <div className="text-sm text-gray-500">{project.slug}</div>
                       </div>
-
-                      {/* Contenido */}
-                      <div className="p-6">
-                        {/* Categoría */}
-                        <div className="mb-3">
-                          <span
-                            className={`inline-block px-3 py-1 text-xs font-semibold rounded-full ${
-                              categoryColors[project.category] || 'bg-gray-100 text-gray-800'
-                            }`}
-                          >
-                            {categoryNames[project.category] || project.category}
-                          </span>
-                        </div>
-
-                        {/* Título */}
-                        <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
-                          {project.title}
-                        </h3>
-
-                        {/* Descripción */}
-                        <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                          {project.description || 'Sin descripción'}
-                        </p>
-
-                        {/* Metadata */}
-                        <div className="flex items-center text-sm text-gray-500 space-x-4">
-                          {project.location && (
-                            <div className="flex items-center">
-                              <svg
-                                className="w-4 h-4 mr-1"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                                />
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                                />
-                              </svg>
-                              {project.location}
-                            </div>
-                          )}
-                          {project.duration && (
-                            <div className="flex items-center">
-                              <svg
-                                className="w-4 h-4 mr-1"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                                />
-                              </svg>
-                              {project.duration}
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Tags */}
-                        {project.tags && project.tags.length > 0 && (
-                          <div className="mt-4 flex flex-wrap gap-2">
-                            {project.tags.slice(0, 3).map((tag: string, index: number) => (
-                              <span
-                                key={index}
-                                className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded"
-                              >
-                                {tag}
-                              </span>
-                            ))}
-                            {project.tags.length > 3 && (
-                              <span className="text-xs text-gray-500">
-                                +{project.tags.length - 3} más
-                              </span>
-                            )}
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Footer */}
-                      <div className="px-6 py-4 bg-gray-50 border-t border-gray-100">
-                        <span className="text-blue-600 text-sm font-semibold group-hover:text-blue-700">
-                          Ver proyecto →
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getCategoryBadge(project.category)}`}>
+                        {project.category}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      {project.published ? (
+                        <span className="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                          <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                          </svg>
+                          Publicado
                         </span>
-                      </div>
-                    </article>
-                  </Link>
+                      ) : (
+                        <span className="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                          <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                          </svg>
+                          Borrador
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-600">
+                      {project.location || "-"}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-600">
+                      {project.start_date ? new Date(project.start_date).toLocaleDateString("es-CL") : "-"}
+                    </td>
+                    <td className="px-6 py-4 text-right text-sm font-medium">
+                      <Link
+                        href={`/admin/projects/${project.id}/view`}
+                        className="text-blue-600 hover:text-blue-900 mr-4"
+                      >
+                        Ver
+                      </Link>
+                      <Link
+                        href={`/admin/projects/${project.id}/edit`}
+                        className="text-indigo-600 hover:text-indigo-900"
+                      >
+                        Editar
+                      </Link>
+                    </td>
+                  </tr>
                 ))}
-              </div>
-            </>
-          )}
-        </div>
-      </section>
-    </main>
+              </tbody>
+            </table>
+          </div>
+        )}
+      </main>
+    </div>
   )
 }

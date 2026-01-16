@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import Link from "next/link"
+import { API_URL } from "@/lib/config"
 
 export default function ViewProjectPage() {
   const params = useParams()
@@ -13,8 +14,6 @@ export default function ViewProjectPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const [deleting, setDeleting] = useState(false)
-
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1"
 
   useEffect(() => {
     fetchProject()
@@ -144,21 +143,21 @@ export default function ViewProjectPage() {
                 </div>
                 <div>
                   <dt className="text-sm font-medium text-gray-600">Cliente</dt>
-                  <dd className="text-sm text-gray-900">{project.client || "—"}</dd>
+                  <dd className="text-sm text-gray-900">{project.client || "–"}</dd>
                 </div>
                 <div>
                   <dt className="text-sm font-medium text-gray-600">Ubicación</dt>
-                  <dd className="text-sm text-gray-900">{project.location || "—"}</dd>
+                  <dd className="text-sm text-gray-900">{project.location || "–"}</dd>
                 </div>
                 <div>
                   <dt className="text-sm font-medium text-gray-600">Fecha de Inicio</dt>
                   <dd className="text-sm text-gray-900">
-                    {project.start_date ? new Date(project.start_date).toLocaleDateString("es-CL") : "—"}
+                    {project.start_date ? new Date(project.start_date).toLocaleDateString("es-CL") : "–"}
                   </dd>
                 </div>
                 <div>
                   <dt className="text-sm font-medium text-gray-600">Duración</dt>
-                  <dd className="text-sm text-gray-900">{project.duration || "—"}</dd>
+                  <dd className="text-sm text-gray-900">{project.duration || "–"}</dd>
                 </div>
                 <div>
                   <dt className="text-sm font-medium text-gray-600">Creado</dt>

@@ -3,13 +3,12 @@
 import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import ProjectForm from "@/components/admin/ProjectForm"
+import { API_URL } from "@/lib/config"
 
 export default function EditProjectPage() {
   const params = useParams()
   const router = useRouter()
   const projectId = params.id as string
-  
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1"
   
   const [project, setProject] = useState<any>(null)
   const [loading, setLoading] = useState(true)

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { API_URL } from "@/lib/config"
 
 interface ProjectFormData {
   title: string
@@ -271,8 +272,8 @@ export default function ProjectForm({ initialData, projectId, mode }: ProjectFor
 
     try {
       const url = mode === "create" 
-        ? "http://127.0.0.1:8000/api/v1/projects"
-        : `http://127.0.0.1:8000/api/v1/projects/${projectId}`
+        ? `${API_URL}/projects`
+        : `${API_URL}/projects/${projectId}`
 
       const method = mode === "create" ? "POST" : "PUT"
 
