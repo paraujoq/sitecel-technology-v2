@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import { API_URL } from "@/lib/config"
 import { usePathname, useRouter } from "next/navigation"
@@ -16,55 +16,64 @@ export default function AdminLayout({
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    console.log("🔐 [LAYOUT] AdminLayout effect triggered, pathname:", pathname)
+    console.log("🔐 [LAYOUT] Verificando autenticación, pathname:", pathname)
     
+    // Si está en login o raíz de admin, no verificar auth
+    if (pathname === "/admin/login" || pathname === "/admin") {
+      console.log("✅ [LAYOUT] Página pública, skip auth check")
+      setIsLoading(false)
+      setIsAuthenticated(true) // Permitir renderizar
+      return
+    }
+
     const checkAuth = async () => {
-      // Si está en login o raíz de admin, no verificar auth
-      if (pathname === "/admin/login" || pathname === "/admin") {
-        console.log("✅ [LAYOUT] Página de login/admin, skip auth check")
-        setIsLoading(false)
-        return
-      }
-
-      console.log("🔍 [LAYOUT] Checking authentication...")
+      console.log("🔍 [LAYOUT] Verificando token...")
       
-      // Obtener token
+      // Esperar un momento para asegurar que localStorage está disponible
+      await new Promise(resolve => setTimeout(resolve, 50))
+      
       const token = localStorage.getItem("token")
-      console.log("📦 [LAYOUT] Token from localStorage:", { exists: !!token, length: token?.length })
+      console.log("📦 [LAYOUT] Token:", { exists: !!token, length: token?.length })
 
-      // Si no hay token, redirigir a login
       if (!token) {
-        console.log("❌ [LAYOUT] No token found, redirecting to login")
-        router.push("/admin/login")
+        console.log("❌ [LAYOUT] No hay token, redirigiendo a login")
+        setIsLoading(false)
+        router.replace("/admin/login")
         return
       }
 
       // Validar token con el backend
-      console.log("📡 [LAYOUT] Validating token with backend...")
+      console.log("📡 [LAYOUT] Validando token con backend...")
       try {
         const response = await fetch(`${API_URL}/auth/me`, {
           headers: {
             "Authorization": `Bearer ${token}`
-          }
+          },
+          cache: 'no-store'
         })
         
-        console.log("📡 [LAYOUT] Validation response:", { status: response.status, ok: response.ok })
+        console.log("📡 [LAYOUT] Respuesta validación:", { 
+          status: response.status, 
+          ok: response.ok 
+        })
 
         if (!response.ok) {
-          console.error("❌ [LAYOUT] Token invalid or expired, redirecting to login")
+          console.error("❌ [LAYOUT] Token inválido")
           localStorage.removeItem("token")
-          router.push("/admin/login")
+          setIsLoading(false)
+          router.replace("/admin/login")
           return
         }
 
-        console.log("✅ [LAYOUT] Token valid, user authenticated")
+        const userData = await response.json()
+        console.log("✅ [LAYOUT] Usuario autenticado:", userData)
         setIsAuthenticated(true)
+        
       } catch (error) {
-        console.error("💥 [LAYOUT] Error validating token:", error)
+        console.error("💥 [LAYOUT] Error validando token:", error)
         localStorage.removeItem("token")
-        router.push("/admin/login")
+        router.replace("/admin/login")
       } finally {
-        console.log("🏁 [LAYOUT] Auth check complete")
         setIsLoading(false)
       }
     }
@@ -72,15 +81,15 @@ export default function AdminLayout({
     checkAuth()
   }, [pathname, router])
 
-  // Página de login o admin root no usa el layout con sidebar
+  // Páginas públicas - renderizar sin sidebar
   if (pathname === "/admin/login" || pathname === "/admin") {
-    console.log("📄 [LAYOUT] Rendering login/admin page without sidebar")
+    console.log("📄 [LAYOUT] Renderizando página pública")
     return <>{children}</>
   }
 
-  // Mostrar loading mientras verifica auth
+  // Mostrar loading mientras verifica
   if (isLoading) {
-    console.log("⏳ [LAYOUT] Showing loading screen")
+    console.log("⏳ [LAYOUT] Mostrando loading...")
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
@@ -91,14 +100,14 @@ export default function AdminLayout({
     )
   }
 
-  // No renderizar nada si no está autenticado (está redirigiendo)
+  // No renderizar si no está autenticado
   if (!isAuthenticated) {
-    console.log("🚫 [LAYOUT] Not authenticated, rendering null")
+    console.log("🚫 [LAYOUT] No autenticado, no renderizar")
     return null
   }
 
-  // Layout con sidebar para todas las páginas admin (excepto login)
-  console.log("✅ [LAYOUT] Rendering authenticated layout with sidebar")
+  // Layout autenticado con sidebar
+  console.log("✅ [LAYOUT] Renderizando layout con sidebar")
   return (
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar />

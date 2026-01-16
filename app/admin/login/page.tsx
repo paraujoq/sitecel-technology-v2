@@ -1,24 +1,15 @@
-﻿"use client"
+"use client"
 
 import { API_URL } from "@/lib/config"
 import { useRouter } from "next/navigation"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 
 export default function LoginPage() {
-  console.log("🎬 [LOGIN] Componente LoginPage montado")
-  
   const router = useRouter()
-  console.log("🧭 [LOGIN] Router inicializado:", { router })
-  
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
-
-  // Logging cuando cambian los estados
-  useEffect(() => {
-    console.log("📊 [LOGIN] Estado actualizado:", { email, passwordLength: password.length, error, loading })
-  }, [email, password, error, loading])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -28,66 +19,66 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      console.log("📝 [LOGIN] Preparando formData...")
+      // Construir URL completa del endpoint
+      const loginUrl = `${API_URL}/auth/login`
+      console.log("🌐 [LOGIN] URL completa:", loginUrl)
+
       const formData = new URLSearchParams()
       formData.append("username", email)
       formData.append("password", password)
-      console.log("✅ [LOGIN] FormData preparado:", { email, passwordLength: password.length })
 
-      console.log("🌐 [LOGIN] Haciendo fetch a:", `${API_URL}/auth/login`)
-      const response = await fetch(`${API_URL}/auth/login`, {
+      const response = await fetch(loginUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
         body: formData
       })
-      console.log("📡 [LOGIN] Response recibida:", { status: response.status, ok: response.ok })
+
+      console.log("📡 [LOGIN] Response:", { 
+        status: response.status, 
+        ok: response.ok,
+        url: response.url 
+      })
 
       if (!response.ok) {
-        console.error("❌ [LOGIN] Response no OK")
         const errorData = await response.json()
-        console.error("❌ [LOGIN] Error data:", errorData)
+        console.error("❌ [LOGIN] Error:", errorData)
         throw new Error(errorData.detail || "Credenciales inválidas")
       }
 
-      console.log("📦 [LOGIN] Parseando JSON...")
       const data = await response.json()
-      console.log("✅ [LOGIN] Data recibida:", { hasToken: !!data.access_token, tokenLength: data.access_token?.length })
+      console.log("✅ [LOGIN] Login exitoso, token recibido:", { 
+        hasToken: !!data.access_token,
+        tokenLength: data.access_token?.length 
+      })
       
-      console.log("💾 [LOGIN] Guardando token en localStorage...")
+      // Guardar token
       localStorage.setItem("token", data.access_token)
-      console.log("✅ [LOGIN] Token guardado")
+      console.log("💾 [LOGIN] Token guardado en localStorage")
       
-      // Verificar que se guardó
+      // Verificar que se guardó correctamente
       const savedToken = localStorage.getItem("token")
-      console.log("🔍 [LOGIN] Verificación token guardado:", { exists: !!savedToken, length: savedToken?.length })
+      if (!savedToken) {
+        throw new Error("Error al guardar el token")
+      }
+      console.log("✅ [LOGIN] Token verificado en localStorage")
       
-      console.log("🔄 [LOGIN] Iniciando redirect a /admin/projects...")
-      console.log("🔄 [LOGIN] Método 1: router.push")
-      router.push("/admin/projects")
+      // Pequeño delay para asegurar que localStorage se actualizó
+      await new Promise(resolve => setTimeout(resolve, 100))
       
-      console.log("⏱️ [LOGIN] Esperando 100ms para fallback...")
-      setTimeout(() => {
-        console.log("🔄 [LOGIN] Método 2: window.location.href")
-        window.location.href = "/admin/projects"
-      }, 100)
-      
-      console.log("✅ [LOGIN] handleSubmit completado (esperando redirects)")
+      // Redirigir usando window.location para forzar recarga completa
+      console.log("🔄 [LOGIN] Redirigiendo a /admin/projects")
+      window.location.href = "/admin/projects"
       
     } catch (err: any) {
-      console.error("💥 [LOGIN] Error capturado:", err)
-      console.error("💥 [LOGIN] Error message:", err.message)
-      console.error("💥 [LOGIN] Error stack:", err.stack)
+      console.error("💥 [LOGIN] Error:", err)
       setError(err.message || "Error al iniciar sesión")
-    } finally {
-      console.log("🏁 [LOGIN] Finally block - setLoading(false)")
       setLoading(false)
     }
   }
 
-  // ... resto del componente
-    return (
+  return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
@@ -147,6 +138,11 @@ export default function LoginPage() {
               {loading ? "Iniciando sesión..." : "Iniciar Sesión"}
             </button>
           </form>
+
+          {/* Debug info - ELIMINAR EN PRODUCCIÓN */}
+          <div className="mt-4 p-3 bg-gray-100 rounded text-xs font-mono">
+            <p className="text-gray-600">API URL: {API_URL}</p>
+          </div>
         </div>
 
         <p className="text-center text-sm text-gray-600 mt-8">
