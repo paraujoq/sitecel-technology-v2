@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
+import { API_URL } from "@/lib/config"
 
 interface Message {
   role: "user" | "assistant"
@@ -18,8 +19,6 @@ export default function ChatWidget() {
   const [input, setInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
-
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1"
 
   // Auto-scroll al último mensaje
   useEffect(() => {
