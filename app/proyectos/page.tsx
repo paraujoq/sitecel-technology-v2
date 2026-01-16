@@ -1,221 +1,115 @@
-"use client"
-
-import { API_URL } from "@/lib/config"
-import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
+import { getPublishedProjects, getCategories } from "@/lib/api"
 import Link from "next/link"
+import ProjectCard from "@/components/ProjectCard"
 
-interface Project {
-  id: string
-  slug: string
-  title: string
-  category: string
-  published: boolean
-  start_date: string | null
-  duration: string | null
-  location: string | null
-  tags: string[]
-  created_at: string
+// Metadata para SEO
+export const metadata = {
+  title: "Nuestros Proyectos | Sitecel Technology",
+  description: "Explora los proyectos destacados de Sitecel Technology en Telecom, IT Infrastructure, Construcción, Ingeniería Eléctrica y Energías Limpias.",
 }
 
-export default function ProjectsPage() {
-  const router = useRouter()
-  const [projects, setProjects] = useState<Project[]>([])
-  const [loading, setLoading] = useState(true)
-  const [filter, setFilter] = useState<"all" | "published" | "draft">("all")
+const categoryNames: Record<string, string> = {
+  "telecom-it": "Telecom & IT Infrastructure",
+  "construccion": "Construcción",
+  "electricidad": "Ingeniería Eléctrica",
+  "energias-limpias": "Energías Limpias"
+}
 
-  useEffect(() => {
-    fetchProjects()
-  }, [filter])
-
-  const fetchProjects = async () => {
-    setLoading(true)
-    try {
-      let url = `${API_URL}/projects`
-      
-      if (filter === "published") {
-        url += "?published=true"
-      } else if (filter === "draft") {
-        url += "?published=false"
-      }
-
-      const response = await fetch(url)
-      const data = await response.json()
-      setProjects(data)
-    } catch (error) {
-      console.error("Error fetching projects:", error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const getCategoryBadge = (category: string) => {
-    const colors: Record<string, string> = {
-      "telecom-it": "bg-blue-100 text-blue-800",
-      "construccion": "bg-orange-100 text-orange-800",
-      "electricidad": "bg-yellow-100 text-yellow-800",
-      "energias-limpias": "bg-green-100 text-green-800"
-    }
-    return colors[category] || "bg-gray-100 text-gray-800"
-  }
+export default async function ProyectosPage() {
+  const projects = await getPublishedProjects()
+  const categories = await getCategories()
 
   return (
-    <div className="min-h-screen">
-      {/* Header de la página */}
-      <div className="bg-white border-b border-gray-200 px-8 py-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Proyectos</h1>
-            <p className="text-gray-600 mt-1">Gestionar todos los proyectos</p>
+    <main className="min-h-screen bg-gray-50">
+      {/* Hero Section */}
+      <section className="bg-gradient-to-r from-blue-900 to-blue-700 text-white py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold mb-6">
+            Nuestros Proyectos
+          </h1>
+          <p className="text-xl text-blue-100 max-w-3xl mx-auto">
+            Descubre los proyectos que hemos realizado en infraestructura de telecomunicaciones,
+            construcción, ingeniería eléctrica y energías limpias.
+          </p>
+        </div>
+      </section>
+
+      {/* Filtros por Categoría */}
+      {categories.length > 0 && (
+        <section className="bg-white border-b border-gray-200 sticky top-0 z-10">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div className="flex flex-wrap gap-3 justify-center">
+              <Link
+                href="/proyectos"
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
+              >
+                Todos los Proyectos
+              </Link>
+              {categories.map((category) => (
+                <Link
+                  key={category}
+                  href={`/proyectos?categoria=${category}`}
+                  className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition font-medium"
+                >
+                  {categoryNames[category] || category}
+                </Link>
+              ))}
+            </div>
           </div>
+        </section>
+      )}
+
+      {/* Lista de Proyectos */}
+      <section className="py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {projects.length === 0 ? (
+            <div className="text-center py-20">
+              <svg className="w-24 h-24 text-gray-300 mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <h3 className="text-2xl font-semibold text-gray-700 mb-2">
+                Próximamente
+              </h3>
+              <p className="text-gray-500">
+                Estamos preparando nuestro portafolio de proyectos.
+              </p>
+            </div>
+          ) : (
+            <>
+              <div className="text-center mb-12">
+                <p className="text-gray-600">
+                  Mostrando <span className="font-semibold text-gray-900">{projects.length}</span> {projects.length === 1 ? 'proyecto' : 'proyectos'}
+                </p>
+              </div>
+
+              {/* Grid de Proyectos */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {projects.map((project) => (
+                  <ProjectCard key={project.id} project={project} />
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="bg-blue-900 text-white py-16">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl font-bold mb-4">
+            ¿Tienes un proyecto en mente?
+          </h2>
+          <p className="text-xl text-blue-100 mb-8">
+            Hablemos sobre cómo podemos ayudarte a hacerlo realidad
+          </p>
           <Link
-            href="/admin/projects/new"
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition">
-            + Nuevo Proyecto
+            href="/#contacto"
+            className="inline-block px-8 py-4 bg-white text-blue-900 font-semibold rounded-lg hover:bg-blue-50 transition text-lg"
+          >
+            Contáctanos
           </Link>
         </div>
-      </div>
-
-      {/* Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Filters */}
-        <div className="bg-white rounded-xl shadow-sm p-4 mb-6 border border-gray-200">
-          <div className="flex gap-2">
-            <button
-              onClick={() => setFilter("all")}
-              className={`px-4 py-2 rounded-lg font-medium transition ${
-                filter === "all"
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
-            >
-              Todos ({projects.length})
-            </button>
-            <button
-              onClick={() => setFilter("published")}
-              className={`px-4 py-2 rounded-lg font-medium transition ${
-                filter === "published"
-                  ? "bg-green-600 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
-            >
-              Publicados
-            </button>
-            <button
-              onClick={() => setFilter("draft")}
-              className={`px-4 py-2 rounded-lg font-medium transition ${
-                filter === "draft"
-                  ? "bg-yellow-600 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
-            >
-              Borradores
-            </button>
-          </div>
-        </div>
-
-        {/* Projects Table */}
-        {loading ? (
-          <div className="text-center py-12">
-            <div className="text-xl text-gray-600">Cargando proyectos...</div>
-          </div>
-        ) : projects.length === 0 ? (
-          <div className="bg-white rounded-xl shadow-sm p-12 text-center border border-gray-200">
-            <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-            </svg>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No hay proyectos</h3>
-            <p className="text-gray-600 mb-4">Comienza creando tu primer proyecto</p>
-            <Link
-              href="/admin/projects/new"
-              className="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition"
-            >
-              Crear Proyecto
-            </Link>
-          </div>
-        ) : (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Proyecto
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Categoría
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Estado
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Ubicación
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Fecha
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Acciones
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {projects.map((project) => (
-                  <tr key={project.id} className="hover:bg-gray-50 transition">
-                    <td className="px-6 py-4">
-                      <div>
-                        <div className="font-medium text-gray-900">{project.title}</div>
-                        <div className="text-sm text-gray-500">{project.slug}</div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getCategoryBadge(project.category)}`}>
-                        {project.category}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      {project.published ? (
-                        <span className="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                          <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                          </svg>
-                          Publicado
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                          <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                          </svg>
-                          Borrador
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-600">
-                      {project.location || "-"}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-600">
-                      {project.start_date ? new Date(project.start_date).toLocaleDateString("es-CL") : "-"}
-                    </td>
-                    <td className="px-6 py-4 text-right text-sm font-medium">
-                      <Link
-                        href={`/admin/projects/${project.id}/view`}
-                        className="text-blue-600 hover:text-blue-900 mr-4"
-                      >
-                        Ver
-                      </Link>
-                      <Link
-                        href={`/admin/projects/${project.id}/edit`}
-                        className="text-indigo-600 hover:text-indigo-900"
-                      >
-                        Editar
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </main>
-    </div>
+      </section>
+    </main>
   )
 }
